@@ -17,17 +17,14 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
+
+import { getCourses } from "@/services/course.service";
 import { Plus, Star } from "lucide-react";
 import Link from "next/link";
 
 
 
 
-async function getCourses() {
-    const res = await fetch("http://localhost:3000/api/courses", { cache: "no-store" });
-
-    return res.json();
-}
 
 
 export default async function CoursesPage() {

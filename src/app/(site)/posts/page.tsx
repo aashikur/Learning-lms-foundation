@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { getPosts } from "@/services/posts.services";
+import { getPosts } from "@/services/post.service";
 import { ArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";
 

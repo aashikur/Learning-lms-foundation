@@ -8,7 +8,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Star } from 'lucide-react';
-import Link from 'next/link';
 
 const CoursesDetails = async ({ params }: { params: { id: string } }) => {
     const resolvedParams = await params;
@@ -23,8 +22,8 @@ const CoursesDetails = async ({ params }: { params: { id: string } }) => {
                 <div className="max-w-md mx-auto">
                     <Card key={course._id} className="border">
                         <CardHeader>
-                            <div className="w-full h-48  mb-4 rounded-md">
-
+                            <div className="w-full h-48  mb-4 rounded-md flex items-center justify-center bg-gray-300 relative">
+                                Image with black overlay
                             </div>
                             <CardTitle>
                                 <h2 className="text-lg font-semibold hover:underline">

@@ -17,9 +17,13 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-    await connectDB();
+    try {
+        await connectDB();
 
-    const courses = await Course.find();
+        const courses = await Course.find();
 
-    return Response.json(courses);
+        return Response.json(courses);
+    }
+    catch (error) { }
 }
+

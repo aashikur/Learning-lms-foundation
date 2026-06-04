@@ -7,20 +7,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
+
 
 import { getCourses } from "@/services/course.service";
-import { Plus, Star } from "lucide-react";
+import { Delete, Plus, Star } from "lucide-react";
 import Link from "next/link";
+import { CreateCourseDrawer } from "./components/CreateCourseDrawer";
+import DeteteCourse from "./components/DeteteCourse";
 
 
 
@@ -29,6 +22,10 @@ import Link from "next/link";
 
 export default async function CoursesPage() {
     const courses = await getCourses();
+
+    const handleDelete = () => {
+        alert("Delete course functionality coming soon!")
+    }
 
     return (
         <>
@@ -41,16 +38,19 @@ export default async function CoursesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
                     {courses.map((course: any) => (
                         <Card key={course._id} className="border">
-                            <CardHeader>
+                            <CardHeader >
                                 <div className="w-full h-48 bg-gray-200 mb-4 rounded-md">
 
                                 </div>
+
+                                <DeteteCourse courseId={course._id} />
+
                                 <CardTitle>
-                                    <Link href={`/courses/${course._id}`} className="text-lg font-semibold hover:underline">
+                                    <Link href={`/courses/${course._id}`} className="text-lg font-semibold hover:underline line-clamp-2">
                                         {course.title}
                                     </Link>
                                 </CardTitle>
-                                <CardDescription>{course.description}</CardDescription>
+                                <CardDescription className="line-clampp-2">{course.description}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <p>Created By: Author</p>
@@ -64,38 +64,5 @@ export default async function CoursesPage() {
                 </div>
             </section>
         </>
-    )
-}
-
-export const CreateCourseDrawer = () => {
-    return (
-        <Drawer
-            direction="right"
-        >
-            <DrawerTrigger>
-                <Button variant="outline"><Plus /> Create Course</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-                <DrawerHeader>
-                    <DrawerTitle className="text-xl font-bold">Create Course</DrawerTitle>
-                    <DrawerDescription>
-                        Fill the form below to create a new course.
-                    </DrawerDescription>
-                </DrawerHeader>
-                <div className="px-4">
-                    <input type="text" placeholder="Course Title" className="w-full mb-4 px-3 py-2 border rounded-md" />
-                    <textarea placeholder="Course Description" className="w-full mb-4 px-3 py-2 border rounded-md" rows={4}></textarea>
-                    <input type="text" placeholder="Course Image URL" className="w-full mb-4 px-3 py-2 border rounded-md" />
-                    <input type="text" placeholder="Course Price" className="w-full mb-4 px-3 py-2 border rounded-md" />
-                </div>
-
-                <DrawerFooter>
-                    <Button> <Plus /> Create course</Button>
-                    <DrawerClose>
-                        <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
     )
 }

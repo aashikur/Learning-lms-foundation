@@ -1,10 +1,14 @@
 
 "use client"
-import React from 'react'
+
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 function Navbar() {
+
+    const pathname = usePathname()
+    console.log(pathname)
 
     const navItems = [
         { name: 'Home', href: '/'},
@@ -16,10 +20,10 @@ function Navbar() {
 
 
     return (
-        <nav className="flex container mx-auto items-center justify-between bg-background py-4 px-6  sm border rounded-full">
-           <Link href="/" className='font-bold cursor-pointer'> TCPC-Rankings</Link>
+        <nav className="flex flex-col sm:flex-row container mx-auto items-center justify-between bg-background py-4 px-6  sm border rounded-full">
+           <Link href="/" className='font-bold cursor-pointer'> TCPC-Rankings {pathname} </Link>
 
-            <ul className="flex space-x-4 hidden sm:flex">
+            <ul className="flex space-x-4  flex">
                 {navItems.map((item) => (
                     <li key={item.name}> 
                         <Link className='hover:opacity-70' href={item.href}>{item.name}</Link>

@@ -12,22 +12,22 @@ function Navbar() {
     console.log(pathname)
 
     const navItems = [
-        { name: 'Home', href: '/'},
-        { name: 'About', href: '/about'},
-        { name: 'Posts', href: '/posts'},
-        { name: 'Courses', href: '/courses'},
-        { name: 'Contact', href: '/contact'},
+        { name: 'Home', href: '/' },
+        { name: 'About', href: '/about' },
+        { name: 'Posts', href: '/posts' },
+        { name: 'Courses', href: '/courses' },
+        { name: 'Contact', href: '/contact' },
     ]
 
 
     return (
         <nav className="flex flex-col sm:flex-row container mx-auto items-center justify-between bg-background py-4 px-6  sm border rounded-full">
-           <Link href="/" className='font-bold cursor-pointer'> TCPC-Rankings {pathname} </Link>
+            <Link href="/" className='font-bold cursor-pointer'> TCPC-Rankings </Link>
 
             <ul className="flex space-x-4  flex">
                 {navItems.map((item) => (
-                    <li key={item.name}> 
-                        <Link className={cn(pathname === item.href && pathname) + "hover:opacity-70" } href={item.href}>{item.name}</Link>
+                    <li key={item.name}>
+                        <Link className={cn(pathname === item.href && pathname) + "hover:opacity-70"} href={item.href}>{item.name}</Link>
                     </li>
                 ))}
             </ul>

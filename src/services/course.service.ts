@@ -63,3 +63,4 @@ export async function deleteCourseById(id: string) {
 
     return res.json();
 }
+

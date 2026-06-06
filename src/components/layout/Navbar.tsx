@@ -2,6 +2,7 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -26,7 +27,7 @@ function Navbar() {
             <ul className="flex space-x-4  flex">
                 {navItems.map((item) => (
                     <li key={item.name}> 
-                        <Link className='hover:opacity-70' href={item.href}>{item.name}</Link>
+                        <Link className={cn(pathname === item.href && pathname) + "hover:opacity-70" } href={item.href}>{item.name}</Link>
                     </li>
                 ))}
             </ul>

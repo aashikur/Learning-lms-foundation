@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -10,10 +9,11 @@ import {
 
 
 import { getCourses } from "@/services/course.service";
-import { Delete, Plus, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import { CreateCourseDrawer } from "./components/CreateCourseDrawer";
 import DeteteCourse from "./components/DeteteCourse";
+import { Course } from "@/types/course.types";
 
 
 
@@ -23,9 +23,7 @@ import DeteteCourse from "./components/DeteteCourse";
 export default async function CoursesPage() {
     const courses = await getCourses();
 
-    const handleDelete = () => {
-        alert("Delete course functionality coming soon!")
-    }
+
 
     return (
         <>
@@ -36,7 +34,7 @@ export default async function CoursesPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-                    {courses.map((course: any) => (
+                    {courses.map((course: Course) => (
                         <Card key={course._id} className="border">
                             <CardHeader >
                                 <div className="w-full h-48 bg-gray-200 mb-4 rounded-md">

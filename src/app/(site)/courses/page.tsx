@@ -7,23 +7,16 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-
 import { getCourses } from "@/services/course.service";
-import { Star } from "lucide-react";
+import { Edit, Star } from "lucide-react";
 import Link from "next/link";
 import { CreateCourseDrawer } from "./components/CreateCourseDrawer";
 import DeteteCourse from "./components/DeteteCourse";
 import { Course } from "@/types/course.types";
-
-
-
-
-
+import EditCourse from "@/app/(site)/courses/components/EditCourse";
 
 export default async function CoursesPage() {
     const courses = await getCourses();
-
-
 
     return (
         <>
@@ -37,8 +30,12 @@ export default async function CoursesPage() {
                     {courses.map((course: Course) => (
                         <Card key={course._id} className="border">
                             <CardHeader >
-                                <div className="w-full h-48 bg-gray-200 mb-4 rounded-md">
+                                <div className="w-full h-48 bg-gray-200 mb-4 rounded-md text-center relative">
+                                    Image Placeholder
 
+                                    <div className="absolute top-2 right-2">
+                                        <EditCourse course={course} />
+                                    </div>
                                 </div>
 
                                 <DeteteCourse courseId={course._id} />

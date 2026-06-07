@@ -28,7 +28,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { createCourse } from "@/services/course.service"
 import { CoursePayload } from "@/types/course.types"
-import { Switch } from "@/components/ui/switch"
 import { Plus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { Textarea } from "@/components/ui/textarea"

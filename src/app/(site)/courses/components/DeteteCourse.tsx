@@ -2,23 +2,61 @@
 
 import { Button } from '@/components/ui/button'
 import { deleteCourseById } from '@/services/course.service';
-import React from 'react'
+import { useRouter } from 'next/navigation';
+import {
+  AlertDialog,
+  AlertDialogClose,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogPopup,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from 'sonner';
 
 export default function DeleteCourse({ courseId }: { courseId: string }) {
+  const router = useRouter();
 
 
   const handleDelete = async () => {
+
+
     // Implementation for delete course functionality
-      const res = await deleteCourseById(courseId);
-      if (res.success) {
-        alert("Course deleted successfully!");
-        // Optionally, you can refresh the course list or redirect the user
-      } else {
-        alert("Failed to delete course. Please try again.");
-      }
+
+    const res = await deleteCourseById(courseId);
+    if (res.success) {
+        toast.success("Course deleted successfully");
+      // Optionally, you can refresh the course list or redirect the user
+      router.refresh();
+    } else {
+      toast.error("Failed to delete course. Please try again.");
+    }
   }
 
   return (
-    <Button onClick={handleDelete}  variant={`destructive`}>DeleteCourse</Button>
+
+    <AlertDialog>
+      <AlertDialogTrigger render={<Button variant={`destructive`}>DeleteCourse</Button>}>
+        Delete Account
+      </AlertDialogTrigger>
+      <AlertDialogPopup>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the course and all associated data.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogClose render={<Button variant="ghost" />}>
+            Cancel
+          </AlertDialogClose>
+          <AlertDialogClose render={<Button onClick={handleDelete} variant="destructive" />}>
+            Delete Account
+          </AlertDialogClose>
+        </AlertDialogFooter>
+      </AlertDialogPopup>
+    </AlertDialog>
+
   )
 }

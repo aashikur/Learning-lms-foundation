@@ -5,8 +5,16 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import LoginButton from '../shared/LoginButton'
+import { useAuth } from '@/providers/AuthProvider'
+import { Loader2, LogOut } from 'lucide-react'
+import LoaderBasic from '../loading-state/LoaderBasic'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import LogoutButton from '../shared/LogoutButton'
 
 function Navbar() {
+    const { user, loading } = useAuth();
+
 
     const pathname = usePathname()
     console.log(pathname)
@@ -31,7 +39,20 @@ function Navbar() {
                     </li>
                 ))}
             </ul>
-            <Button size="lg" className={`rounded-full px-8 cursor-pointer`}>Login</Button>
+            {
+                loading ? <LoaderBasic />
+                    :
+                    user ?
+                        <div  className='flex items-center space-x-.5'>
+                            <Avatar title={user.displayName || undefined}>
+                                <AvatarImage src={user?.photoURL || ""} />
+                                <AvatarFallback>{user?.displayName?.charAt(0) || "CN"}</AvatarFallback>
+                            </Avatar>
+                            <LogoutButton/>
+                            </div>
+                        :
+                        <LoginButton />
+            }
         </nav>
     )
 }

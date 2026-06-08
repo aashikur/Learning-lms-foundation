@@ -1,6 +1,5 @@
-import Navbar from "@/components/layout/Navbar";
+
 import CodeforcePage from "@/components/sections/CodeforcePage";
-import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import EmptyState from "@/components/empty-state/EmptyState";
 

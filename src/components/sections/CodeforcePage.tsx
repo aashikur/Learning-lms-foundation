@@ -41,6 +41,7 @@ import {
 import { Delete, EllipsisVertical, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@/providers/AuthProvider";
 import { CodeforceUser } from "@/types/codeforce.type";
+import { cn } from "@/lib/utils";
 
 export default function CodeforcePage() {
   const [handle, setHandle] = useState("");
@@ -199,7 +200,7 @@ export default function CodeforcePage() {
             ) : (
 
               users.map((u: any, i: number) => (
-                <TableRow key={u.handle} className="border-t text-left">
+                <TableRow key={u.handle} className={cn( i % 2 === 1 ? "bg-muted/70" : "border-t text-left")}>
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>
                     <div className="text-left">

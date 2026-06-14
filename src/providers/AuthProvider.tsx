@@ -1,39 +1,83 @@
 "use client";
 
 import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { getCurrentUser, syncUserToDatabase } from '@/services/auth.service';
 
-type AuthContextType = {
-    user: User | null,
-    loading: boolean
+// Defining our MongoDB user metadata interface
+interface MongoUser {
+    _id: string;
+    uid: string;
+    email: string;
+    name: string;
+    photoURL: string;
+    role: 'student' | 'instructor' | 'admin';
+    enrolledCourses: string[];
 }
 
-const AuthContext = createContext<AuthContextType>({
-    user: null,
-    loading: true
-})
+type AuthContextType = {
+    user: FirebaseUser | null,
+    mongoUser: MongoUser | null,
+    loading: boolean,
+    loginWithGoogle: () => Promise<void>,
+    logout: () => Promise<void>;
+}
 
-const AuthProvider = ({ children } : { children: React.ReactNode }) => {
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-    const [user, setUser] = useState<User | null>(null);
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+
+    const [user, setUser] = useState<FirebaseUser | null>(null);
+    const [mongoUser, setMongoUser] = useState<MongoUser | null>(null);
     const [loading, setLoading] = useState(true);
+
+
 
     useEffect(() => {
         // Listen for authentication state changes
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const unsubscribe = onAuthStateChanged(auth, async (FirebaseUser) => {
+            setUser(FirebaseUser);
+
+            if (FirebaseUser) {
+                // Direct, clean call to your service layer
+                const mongoData = await getCurrentUser(FirebaseUser.uid);
+                setMongoUser(mongoData);
+            } else {
+                setMongoUser(null);
+            }
+
             setLoading(false);
         })
         return () => unsubscribe();
-    },[])
-  return (
-     <AuthContext.Provider value={{ user, loading}}>
-        {children}
-     </AuthContext.Provider>
-  )
+    }, []);
+
+
+    const loginWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        await signInWithPopup(auth, provider);
+    };
+
+
+    const logout = async () => {
+        await signOut(auth);
+    };
+
+
+    return (
+        <AuthContext.Provider value={{ user, mongoUser, loading, loginWithGoogle, logout }}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
 
 export default AuthProvider;
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};

@@ -14,8 +14,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
+import { Trash } from 'lucide-react';
 
-export default function DeleteCourse({ courseId }: { courseId: string }) {
+export default function DeleteCourse({ courseId, onlyIcon = false }: { courseId: string; onlyIcon?: boolean }) {
   const router = useRouter();
 
 
@@ -26,7 +27,7 @@ export default function DeleteCourse({ courseId }: { courseId: string }) {
 
     const res = await deleteCourseById(courseId);
     if (res.success) {
-        toast.success("Course deleted successfully");
+      toast.success("Course deleted successfully");
       // Optionally, you can refresh the course list or redirect the user
       router.refresh();
     } else {
@@ -37,7 +38,12 @@ export default function DeleteCourse({ courseId }: { courseId: string }) {
   return (
 
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant={`destructive`}>DeleteCourse</Button>}>
+      <AlertDialogTrigger render={
+        <Button variant={`destructive`}>
+          {onlyIcon ? <Trash /> : "Delete Course"}
+        </Button>}>
+
+
         Delete Account
       </AlertDialogTrigger>
       <AlertDialogPopup>

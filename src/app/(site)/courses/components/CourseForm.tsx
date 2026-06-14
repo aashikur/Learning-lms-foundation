@@ -25,7 +25,7 @@ const CourseForm = ({
     submitText = "Create Course"
 }: CourseFormProps) => {
     const { register, handleSubmit} = useForm({
-        defaultValues,
+        defaultValues
     });
 
 
@@ -48,6 +48,12 @@ const CourseForm = ({
                                 <Textarea id="description" {...register("description")} autoComplete="off" placeholder="Course Description" />
                                 {/* <FieldError>.</FieldError> */}
                             </Field>
+
+
+
+
+
+
 
                             <Button type="submit">
                                 <Plus className="mr-2 size-4" /> {submitText}

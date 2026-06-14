@@ -8,6 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { getPostById } from "@/services/post.service";
 
 type Props = {
     params: Promise<{ id: string }>
@@ -16,10 +17,7 @@ type Props = {
 async function PostDetails({ params }: Props) {
     const { id } = await params;
 
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-    const { title, body } = await res.json();
-
-    console.log({ title, body });
+    const { title, body }  = await getPostById(id);
 
     return (
         <div className="container mx-auto py-12 md:py-16 max-w-7xl">

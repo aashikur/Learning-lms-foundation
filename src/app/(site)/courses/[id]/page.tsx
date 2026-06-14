@@ -8,8 +8,11 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DeleteCourse from '@/app/(site)/courses/components/DeteteCourse';
+import EditCourse from '@/app/(site)/courses/components/EditCourse';
 
-const CoursesDetails = async ({ params }: { params: { id: string } }) => {
+const CoursesDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     const resolvedParams = await params;
     const id = resolvedParams.id;
     const course = await getCourseById(id);
@@ -25,6 +28,13 @@ const CoursesDetails = async ({ params }: { params: { id: string } }) => {
                             <div className="w-full h-48  mb-4 rounded-md flex items-center justify-center bg-gray-300 relative">
                                 Image with black overlay
                             </div>
+
+                            <div className="flex items-center justify-between space-x-2 ">
+                                <DeleteCourse onlyIcon={true} courseId={course._id} />
+                                <EditCourse course={course} />
+                            </div>
+
+
                             <CardTitle>
                                 <h2 className="text-lg font-semibold hover:underline">
 

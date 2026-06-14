@@ -1,8 +1,9 @@
 "use client"
 
+import { LoginInWithGoogle } from '@/services/auth.service'
 import { Button } from '../ui/button'
 import { LogIn } from 'lucide-react'
-import { LoginInWithGoogle } from '@/services/auth'
+// import { LoginInWithGoogle } from '@/services/auth'
 
 function LoginButton() {
         

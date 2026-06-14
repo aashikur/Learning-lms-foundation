@@ -19,9 +19,9 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({
-  title = "No data found",
-  description = "There is nothing to display right now.",
-  buttonText = "Add data",
+  title = "Coming soon",
+  description = "This section is under development. Stay tuned for updates!",
+  buttonText = "Go Back",
   onAction,
 }: EmptyStateProps) {
   return (

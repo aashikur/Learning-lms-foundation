@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import { Codeforce } from "@/models/Codeforce";
+import { Codeforce } from "@/models/codeforce.model";
 
 export async function POST(req: Request) {
   await connectDB();
@@ -42,12 +42,50 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   await connectDB();
 
   try {
-    const users = await Codeforce.find().sort({ rating: -1 });
-    return Response.json(users);
+    const { searchParams } = new URL(request.url);
+
+    const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") as string) || 1;
+    const limit = parseInt(searchParams.get("limit") as string) || 10;
+
+    // Ensure page and limit are at least 1
+    const sanitizedPage = Math.max(1, page);
+    const sanitizedLimit = Math.max(1, limit);
+
+    const query: Record<string, any> = {};
+    if (search) {
+      query.handle = { $regex: search, $options: "i" };
+    }
+
+    const skip = (sanitizedPage - 1) * sanitizedLimit;
+
+    const [users, totalUsers] = await Promise.all([
+      Codeforce.find(query)
+        .sort({ rating: -1 })
+        .skip(skip)
+        .limit(sanitizedLimit)
+        .lean(),
+      Codeforce.countDocuments(query)
+    ]);
+
+    const totalPages = Math.ceil(totalUsers / sanitizedLimit);
+
+    return Response.json({
+      success: true,
+      data: users,
+      meta: {
+        totalItems: totalUsers,
+        totalPages: totalPages,
+        currentPage: sanitizedPage,
+        itemsPerPage: sanitizedLimit,
+        hasNextPage: sanitizedPage < totalPages,
+        hasPrevPage: sanitizedPage > 1
+      }
+    });
   } catch (error) {
     return Response.json({ error: "Failed to fetch" }, { status: 500 });
   }

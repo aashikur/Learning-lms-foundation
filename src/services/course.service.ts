@@ -18,7 +18,7 @@ export async function getCourses() {
 export async function getCourseById(id: string) {
     const res = await fetch(`${config.baseURL}/api/courses/${id}`, { cache: "no-store" });
     if (!res.ok) {
-        throw new Error("Failed");
+        throw new Error("Failed to fetch course");
     }
     return res.json();
 }

@@ -23,8 +23,8 @@ import { toast } from "sonner"
 export const CreateCourseDrawer = () => {
     const [open, setOpen] = useState(false);
     const router = useRouter();
+
     const handleCreateCourse = async (data: CoursePayload) => {
-    
         await createCourse(data);
         router.refresh();
         setOpen(false);

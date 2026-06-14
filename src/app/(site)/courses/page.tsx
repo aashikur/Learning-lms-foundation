@@ -24,6 +24,7 @@ export default async function CoursesPage() {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-3xl font-bold">Courses</h1>
                     <CreateCourseDrawer />
+                    
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
@@ -35,6 +36,7 @@ export default async function CoursesPage() {
 
                                     <div className="absolute top-2 right-2">
                                         <EditCourse course={course} />
+                                        
                                     </div>
                                 </div>
 

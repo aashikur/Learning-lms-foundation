@@ -21,10 +21,10 @@ function Navbar() {
 
     const navItems = [
         { name: 'Home', href: '/' },
-        { name: 'About', href: '/about' },
-        { name: 'Posts', href: '/posts' },
-        { name: 'Courses', href: '/courses' },
-        { name: 'Contact', href: '/contact' },
+        // { name: 'About', href: '/about' },
+        // { name: 'Posts', href: '/posts' },
+        // { name: 'Courses', href: '/courses' },
+        // { name: 'Contact', href: '/contact' },
     ]
 
 

@@ -1,9 +1,9 @@
 import { connectDB } from "@/lib/db";
-import { Course } from "@/models/Course";
+import { Course } from "@/models/course.model";
 
 
 // Get course by id
-export async function GET(req: Request, context: { params: { id: string } }) {
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
 
@@ -23,7 +23,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 
 
 // Edit course by id - Patch request
-export async function PATCH(req: Request, context: { params: { id: string } }) {
+export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
 
@@ -54,7 +54,7 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
 
 
 // Delete course by id 
-export async function DELETE(req: Request, context: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
 

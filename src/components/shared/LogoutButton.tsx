@@ -2,7 +2,7 @@
 import React from 'react'
 import { Button } from '../ui/button'
 import { LogOutIcon } from 'lucide-react'
-import { logout } from '@/services/auth'
+import { logout } from '@/services/auth.service'
 
 function LogoutButton() {
   return (

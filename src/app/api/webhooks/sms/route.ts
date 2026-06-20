@@ -28,20 +28,21 @@ export async function POST(req: Request) {
 
         if (!parsed.tnxId) {
 
-            return Response.json(
-                {
-                    success: false,
-                    message: "invalid sms"
-                }
-            );
+            parsed.tnxId = "tnx_" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            // return Response.json(
+            //     {
+            //         success: false,
+            //         message: "invalid sms"
+            //     }
+            // );
 
         }
 
         await VerifiedSMS.create({
 
             tnxId: parsed.tnxId,
-            amount: parsed.amount,
-            provider: parsed.provider,
+            amount: parsed.amount || 0,
+            provider: parsed.provider || "unknown",
             rawText: body.text
 
         });

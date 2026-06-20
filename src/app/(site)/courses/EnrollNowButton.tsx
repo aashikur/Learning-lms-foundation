@@ -18,7 +18,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldValues } from 'react-hook-form';
 
 
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,7 @@ const EnrollNowButton = ({ course }: { course: Course }) => {
 
     const { register, handleSubmit } = useForm()
 
-    const handleEnroll = async (data) => {
+    const handleEnroll = async (data: FieldValues) => {
 
         if (!mongoUser || !mongoUser._id) {
             console.warn("Enroll attempted without authenticated user");

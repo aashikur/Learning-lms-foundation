@@ -14,17 +14,18 @@ import LogoutButton from '../shared/LogoutButton'
 
 function Navbar() {
     const { user, loading } = useAuth();
-
+        // console.log("Mongo User in Navbar:", mongoUser);
+        // console.log(" User in Navbar:", user);
 
     const pathname = usePathname()
-    console.log(pathname)
+    // console.log(pathname)
 
     const navItems = [
         { name: 'Home', href: '/' },
-        // { name: 'About', href: '/about' },
-        // { name: 'Posts', href: '/posts' },
-        // { name: 'Courses', href: '/courses' },
-        // { name: 'Contact', href: '/contact' },
+        { name: 'About', href: '/about' },
+        { name: 'Posts', href: '/posts' },
+        { name: 'Courses', href: '/courses' },
+        { name: 'Contact', href: '/contact' },
     ]
 
 

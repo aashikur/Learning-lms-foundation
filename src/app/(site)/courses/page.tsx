@@ -14,9 +14,11 @@ import { CreateCourseDrawer } from "./components/CreateCourseDrawer";
 import DeteteCourse from "./components/DeteteCourse";
 import { Course } from "@/types/course.types";
 import EditCourse from "@/app/(site)/courses/components/EditCourse";
+import { Button } from "@/components/ui/button";
+import EnrollNowButton from "@/app/(site)/courses/EnrollNowButton";
 
 export default async function CoursesPage() {
-    const courses = await getCourses();
+    const { data: courses } = await getCourses();
 
     return (
         <>
@@ -24,11 +26,11 @@ export default async function CoursesPage() {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-3xl font-bold">Courses</h1>
                     <CreateCourseDrawer />
-                    
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
-                    {courses.map((course: Course) => (
+                    {courses?.map((course: Course) => (
                         <Card key={course._id} className="border">
                             <CardHeader >
                                 <div className="w-full h-48 bg-gray-200 mb-4 rounded-md text-center relative">
@@ -36,7 +38,7 @@ export default async function CoursesPage() {
 
                                     <div className="absolute top-2 right-2">
                                         <EditCourse course={course} />
-                                        
+
                                     </div>
                                 </div>
 
@@ -51,6 +53,11 @@ export default async function CoursesPage() {
                             </CardHeader>
                             <CardContent>
                                 <p>Created By: Author</p>
+                                <p>Price: ${course.price}</p>
+                                <Button variant="outline" size="sm" className="mt-2 mr-2">
+                                    Add to Cart
+                                </Button>
+                              <EnrollNowButton course={course} />
                             </CardContent>
                             <CardFooter className="justify-between">
                                 <p>Created: {new Date(course.createdAt).toLocaleDateString()}</p>

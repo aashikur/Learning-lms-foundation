@@ -28,6 +28,7 @@ import { Course } from "@/types/course.types";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { config } from "@/config";
+import { SMSStatus } from "@/services/sms.service";
 
 const EnrollNowButton = ({ course }: { course: Course }) => {
     const [orderId, setOrderId] = useState<string | null>(null);
@@ -62,6 +63,8 @@ const EnrollNowButton = ({ course }: { course: Course }) => {
 
     }
 
+    
+
 
     useEffect(() => {
 
@@ -69,10 +72,11 @@ const EnrollNowButton = ({ course }: { course: Course }) => {
             return;
 
         const interval = setInterval(async () => {
-            const res = await fetch(`${config.baseURL}/api/payments/status/${orderId}`);
+            // const res = await fetch(`${config.baseURL}/api/payments/status/${orderId}`);
             setCount(prevCount => prevCount + 1);
 
-            const data = await res.json();
+            const data = await SMSStatus({ orderId });
+            
             console.log("Payment status response:", data);
             if (data.status === "PAID") {
                 setPaymentStatus("PAID");

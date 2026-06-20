@@ -26,6 +26,8 @@ function Navbar() {
         { name: 'Posts', href: '/posts' },
         { name: 'Courses', href: '/courses' },
         { name: 'Contact', href: '/contact' },
+        { name: 'sms', href: '/sms' },
+        { name: 'order', href: '/order' },
     ]
 
 

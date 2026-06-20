@@ -82,3 +82,14 @@ export async function POST(req: Request) {
     }
 
 }
+
+export async function GET(req: Request) {
+    connectDB();
+
+    const sms = await VerifiedSMS.find().sort({ createdAt: -1 });
+
+    return Response.json({
+        success: true,
+        data: sms
+    });
+}

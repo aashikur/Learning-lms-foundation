@@ -22,4 +22,14 @@ export async function CreatePaymentOrder(payload: { userId: string; courseId: st
     return res.json();
 }
 
+
+export async function GetAllPaymentOrders() {
+    const res = await fetch(`${config.baseURL}/api/payments/all`, { 
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"  
+        }
+    });
+    return res.json();
+}
  

@@ -13,7 +13,8 @@ function LoginButton() {
             className={`rounded-full px-8 cursor-pointer`}
             onClick={() => LoginInWithGoogle()}
             variant="default">
-            Login With Google
+            <span className=" sm:hidden"> G</span>
+            <span className="hidden sm:inline"> Login With Google</span>
         </Button>
     )
 }

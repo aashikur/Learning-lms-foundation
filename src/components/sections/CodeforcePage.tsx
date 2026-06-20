@@ -1,6 +1,8 @@
 "use client";
-import { Field, FieldLabel } from "@/components/ui/field"
 
+import * as React from "react"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Pagination,
   PaginationContent,
@@ -18,70 +20,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-import { useEffect, useRef, useState } from "react";
-import {
-  addUser,
-  deleteUser,
-  getCodeforceLeaderboard,
-} from "@/services/codeforce.service";
-import { Delete, EllipsisVertical, Plus, Trash2 } from "lucide-react";
+import { EllipsisVertical, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@/providers/AuthProvider";
+import { getCodeforceLeaderboard, addUser, deleteUser } from "@/services/codeforce.service";
 import { CodeforceUser } from "@/types/codeforce.type";
 import { cn } from "@/lib/utils";
 
+// Helper function to colorize Codeforces handles by rank style
+const getRankColor = (rank: string) => {
+  const r = rank?.toLowerCase() || ""
+  if (r.includes("legendary") || r.includes("grandmaster")) return "text-red-600 font-bold"
+  if (r.includes("master")) return "text-orange-500 font-bold"
+  if (r.includes("candidate master")) return "text-violet-500 font-semibold"
+  if (r.includes("expert")) return "text-blue-600 font-medium"
+  if (r.includes("specialist")) return "text-cyan-600"
+  if (r.includes("pupil")) return "text-green-600"
+  if (r.includes("newbie")) return "text-muted-foreground"
+  return "text-foreground"
+}
+
 export default function CodeforcePage() {
-  const [handle, setHandle] = useState("");
+  const { mongoUser } = useAuth();
+  const [handle, setHandle] = React.useState("");
 
-  // 2. Search & Pagination States
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [limit, setLimit] = useState(10);
+  // Search & Pagination States
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [limit, setLimit] = React.useState(10);
 
-  const [users, setUsers] = useState<CodeforceUser[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
+  const [users, setUsers] = React.useState<CodeforceUser[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [totalItems, setTotalItems] = React.useState(0);
 
-  const loadUsers = async (currentPage: number, searchTerm: string, limit: number) => {
+  const loadUsers = async (page: number, search: string, rowLimit: number) => {
     setLoading(true);
     try {
       const data = await getCodeforceLeaderboard({
-        page: currentPage,
-        limit: limit,
-        search: searchTerm,
-        
+        page,
+        limit: rowLimit,
+        search,
       });
-      console.log('==========: ', data);
-
-      setUsers(data.data);
-      setTotalPages(data.meta.totalPages);
-      setCurrentPage(data.meta.currentPage);
-      setTotalItems(data.meta.totalItems);
+      if (data?.success) {
+        setUsers(data.data);
+        setTotalPages(data.meta.totalPages);
+        setCurrentPage(data.meta.currentPage);
+        setTotalItems(data.meta.totalItems);
+      }
     } catch (error) {
-      console.log("error loading users: ", error)
+      console.error("Error loading users: ", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-
-  // 4. Debounced Side-Effect Hook
-  // Refetches data when currentPage changes OR 300ms after user stops typing
-  useEffect(() => {
+  // Debounced search logic tracking state transformations
+  React.useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       loadUsers(currentPage, searchTerm, limit);
     }, 300);
@@ -89,159 +94,152 @@ export default function CodeforcePage() {
     return () => clearTimeout(delayDebounceFn);
   }, [currentPage, searchTerm, limit]);
 
-
-  // 5. Reset pagination to page 1 whenever someone updates the search filter
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-
   const handleAdd = async () => {
-    if (!handle) return;
-
+    if (!handle.trim()) return;
     setLoading(true);
-
-    const res = await addUser(handle);
-
+    const res = await addUser(handle.trim());
     setLoading(false);
-    setHandle("");
-
-    if (res.error) {
+    
+    if (res?.error) {
       alert(res.error);
       return;
     }
-
+    setHandle("");
     loadUsers(currentPage, searchTerm, limit);
   };
 
-  const handleDelete = async (handle: string) => {
-    if (!confirm(`Are you sure you want to delete ${handle}?`)) return;
+  const handleDelete = async (userHandle: string) => {
+    if (!confirm(`Are you sure you want to delete ${userHandle}?`)) return;
     setLoading(true);
-    deleteUser(handle).then((res) => {
-      setLoading(false);
-      if (res.error) {
+    try {
+      const res = await deleteUser(userHandle);
+      if (res?.error) {
         alert(res.error);
-        return;
+      } else {
+        // Adjust page step index if deleting the last remaining row item on a page
+        const updatedTotal = totalItems - 1;
+        const maxPagesAvailable = Math.ceil(updatedTotal / limit) || 1;
+        const targetPage = currentPage > maxPagesAvailable ? maxPagesAvailable : currentPage;
+        setCurrentPage(targetPage);
+        loadUsers(targetPage, searchTerm, limit);
       }
-      loadUsers(currentPage, searchTerm, limit); // refresh table
-    });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { mongoUser } = useAuth();
+  const isAdmin = mongoUser?.role === "admin";
 
   return (
-    <div className="">
-      {/* INPUT SECTION */}
-
-      <Field orientation="horizontal" className="my-6 justify-center ">
-        {/* Leaderboard Search Filter */}
+    <div className="space-y-6">
+      {/* INPUT / CONTROL SECTION */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-muted/30 p-4 rounded-xl border">
         <div className="w-full md:w-72">
           <Input
             type="text"
             value={searchTerm}
             placeholder="Search leaderboard..."
             onChange={handleSearchChange}
+            className="bg-background"
           />
         </div>
 
-        {/* Add Handle System */}
-        <Field orientation="horizontal" className="justify-center gap-2">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <Input
-            type="search"
+            type="text"
             value={handle}
-            placeholder="Add Your Codeforce Handle"
+            placeholder="Add Codeforces Handle"
             onChange={(e) => setHandle(e.target.value)}
+            className="bg-background max-w-md"
           />
-
-          <Button
-            className="py-5 px-4"
-            onClick={handleAdd}
-            disabled={loading}
-          >
-            <Plus className="h-4 w-4" />
-            {loading ? "Updating..." : "Add  Handle"}
+          <Button onClick={handleAdd} disabled={loading} className="shrink-0">
+            <Plus className="h-4 w-4 mr-2" />
+            {loading ? "Updating..." : "Add Handle"}
           </Button>
-        </Field>
-      </Field>
+        </div>
+      </div>
 
+      {/* LEADERBOARD TABLE LAYOUT */}
+      <div className="rounded-md border bg-background overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50 text-left">
+              <TableHead className="w-[60px] text-center">#</TableHead>
+              <TableHead>Handle</TableHead>
+              <TableHead>Rating</TableHead>
+              <TableHead>Max Rating</TableHead>
+              <TableHead>Rank</TableHead>
+              <TableHead>Country</TableHead>
+              {isAdmin && <TableHead className="w-[80px] text-center"><EllipsisVertical className="h-4 w-4 mx-auto" /></TableHead>}
+            </TableRow>
+          </TableHeader>
 
-
-      {/* TABLE */}
-
-
-      <Table>
-        {/* <TableCaption>Codeforces Leaderboard</TableCaption> */}
-        <TableHeader>
-          <TableRow className="bg-muted text-left">
-            <TableHead>#</TableHead>
-            <TableHead>Handle</TableHead>
-            <TableHead>Rating</TableHead>
-            <TableHead>Max Rating</TableHead>
-            <TableHead>Rank</TableHead>
-            <TableHead>Country</TableHead>
-            {
-              mongoUser?.role === "admin" && (
-                <TableHead className="text-center max-w-25 ml-auto flex justify-end items-center mr-3">
-                  <span> <EllipsisVertical className="h-4 w-4" /></span>
-                </TableHead>
-              )
-            }
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {
-
-            users.length === 0 ? (
+          <TableBody>
+            {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">No users found</TableCell>
+                <TableCell colSpan={isAdmin ? 7 : 6} className="text-center py-8 text-muted-foreground">
+                  {loading ? "Loading leaderboard data..." : "No competitive programmers found"}
+                </TableCell>
               </TableRow>
             ) : (
-
-              users.map((u: any, i: number) => (
-                <TableRow key={u.handle} className={cn( i % 2 === 1 ? "bg-muted/70" : "border-t text-left")}>
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>
-                    <div className="text-left">
-                      <div>{u.handle} </div>
-                      <div className="text-[10px] text-muted-foreground">
-                        {u.handle}
+              users.map((u: any, i: number) => {
+                const globalIndex = (currentPage - 1) * limit + (i + 1);
+                return (
+                  <TableRow key={u._id || u.handle} className={cn(i % 2 === 1 && "bg-muted/30")}>
+                    <TableCell className="text-center font-medium text-muted-foreground">{globalIndex}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-7 w-7 border">
+                          <AvatarImage src={u.avatar} alt={u.handle} />
+                          <AvatarFallback className="text-[10px]">{u.handle?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className={cn("hover:underline cursor-pointer transition-colors", getRankColor(u.rank))}>
+                            {u.handle}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{u.rating}</TableCell>
-                  <TableCell>{u.maxRating}</TableCell>
-                  <TableCell>{u.rank}</TableCell>
-                  <TableCell>{u.country}</TableCell>
-                  {
-                    mongoUser?.role === "admin" && (
-                      <TableCell className="text-right max-w-25">
+                    </TableCell>
+                    <TableCell className="font-semibold">{u.rating || 0}</TableCell>
+                    <TableCell className="text-muted-foreground">{u.maxRating || 0}</TableCell>
+                    <TableCell className="capitalize text-sm">{u.rank || "unrated"}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{u.country || "unknown"}</TableCell>
+                    {isAdmin && (
+                      <TableCell className="text-center">
                         <Button
                           onClick={() => handleDelete(u.handle)}
-                          variant="destructive" size="sm">
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
-                    )
-                  }
-                </TableRow>
-              ))
+                    )}
+                  </TableRow>
+                )
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-            )
-
-          }
-        </TableBody>
-      </Table>
-
-
-      {/* // paginatoin  */}
-      <div className="flex items-center  py-4 mt-5 gap-2">
-        {
-          totalPages > 1 && (<Field orientation="horizontal" className="w-fit">
-            <FieldLabel className="max-w-fit w-100" htmlFor="select-rows-per-page">Total : {totalItems}</FieldLabel>
-            <Select value={limit.toString()} onValueChange={(value) => setLimit(Number(value))}>
-              <SelectTrigger className="w-20" id="select-rows-per-page">
+      {/* PAGINATION PANEL CONTROLS */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2 border-t pt-4">
+          <Field orientation="horizontal" className="flex items-center gap-2">
+            <FieldLabel className="text-sm text-muted-foreground shrink-0">
+              Total items: <span className="font-medium text-foreground">{totalItems}</span>
+            </FieldLabel>
+            <Select value={limit.toString()} onValueChange={(val) => { setLimit(Number(val)); setCurrentPage(1); }}>
+              <SelectTrigger className="w-20 h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent align="start">
@@ -253,173 +251,52 @@ export default function CodeforcePage() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </Field>)
+          </Field>
 
-        }
-
-
-        {totalPages > 1 && (
-          <Pagination>
+          <Pagination className="w-auto mx-0">
             <PaginationContent>
-
               <PaginationItem>
-                <PaginationPrevious href="#" onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) setCurrentPage(currentPage - 1);
-                }} />
-              </PaginationItem>
-
-
-              {
-                Array.from({ length: totalPages }, (_, i) => {
-                  const pageNumber = i + 1;
-                  return (
-                    <PaginationItem key={i}>
-                      <PaginationLink href="#" onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(pageNumber);
-                      }}>
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })
-              }
-
-              {
-                totalPages > 5 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-
-              <PaginationItem>
-                <PaginationNext href="#" onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                }}
+                <PaginationPrevious 
+                  href="#" 
+                  className={cn(currentPage === 1 && "pointer-events-none opacity-50")}
+                  onClick={(e) => { e.preventDefault(); if (currentPage > 1) setCurrentPage(currentPage - 1); }} 
                 />
               </PaginationItem>
 
-            </PaginationContent>
-          </Pagination>)}
+              {Array.from({ length: totalPages }, (_, i) => {
+                const pageNumber = i + 1;
+                // Simple logic wrapper to display close pages to handle massive dynamic tables seamlessly
+                if (totalPages > 5 && Math.abs(currentPage - pageNumber) > 1 && pageNumber !== 1 && pageNumber !== totalPages) {
+                  if (pageNumber === 2 || pageNumber === totalPages - 1) {
+                    return <PaginationItem key={i}><PaginationEllipsis /></PaginationItem>
+                  }
+                  return null;
+                }
 
-      </div>
+                return (
+                  <PaginationItem key={i}>
+                    <PaginationLink 
+                      href="#" 
+                      isActive={currentPage === pageNumber}
+                      onClick={(e) => { e.preventDefault(); setCurrentPage(pageNumber); }}
+                    >
+                      {pageNumber}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  className={cn(currentPage === totalPages && "pointer-events-none opacity-50")}
+                  onClick={(e) => { e.preventDefault(); if (currentPage < totalPages) setCurrentPage(currentPage + 1); }} 
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }
-
-
-// {
-//     "success": true,
-//     "data": [
-//         {
-//             "_id": "6a270893f2dc19cab4680364",
-//             "handle": "strapple",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/1569515/avatar/40caebea5869f243.jpg",
-//             "country": "China",
-//             "maxRating": 3515,
-//             "rank": "legendary grandmaster",
-//             "rating": 3515
-//         },
-//         {
-//             "_id": "6a2dd5eda6a69e2c03a3eb1a",
-//             "handle": "DFS",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/no-avatar.jpg",
-//             "country": "Poland",
-//             "maxRating": 1849,
-//             "rank": "expert",
-//             "rating": 1617
-//         },
-//         {
-//             "_id": "6a2dd628a6a69e2c03a3eb26",
-//             "handle": "Amin",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/34180/avatar/f0c6e58907983dfd.jpg",
-//             "country": "Egypt",
-//             "maxRating": 1424,
-//             "rank": "specialist",
-//             "rating": 1424
-//         },
-//         {
-//             "_id": "6a2d7c15a6a69e2c03a3dc12",
-//             "handle": "islomjon_yd",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/4816396/avatar/6e513e6226fb9b4f.jpg",
-//             "country": "Tajikistan",
-//             "maxRating": 1169,
-//             "rank": "newbie",
-//             "rating": 1048
-//         },
-//         {
-//             "_id": "6a2dd5e7a6a69e2c03a3eb19",
-//             "handle": "fdfd",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/no-avatar.jpg",
-//             "country": "unknown",
-//             "maxRating": 889,
-//             "rank": "newbie",
-//             "rating": 889
-//         },
-//         {
-//             "_id": "6a2dd247a6a69e2c03a3ea91",
-//             "handle": "AAAs",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/no-avatar.jpg",
-//             "country": "unknown",
-//             "maxRating": 1366,
-//             "rank": "newbie",
-//             "rating": 805
-//         },
-//         {
-//             "_id": "6a2dd5e2a6a69e2c03a3eb16",
-//             "handle": "anik",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/96358/avatar/5d01f2c2651622b7.jpg",
-//             "country": "Bangladesh",
-//             "maxRating": 787,
-//             "rank": "newbie",
-//             "rating": 787
-//         },
-//         {
-//             "_id": "6a2dd5fba6a69e2c03a3eb1d",
-//             "handle": "dfdf",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/4200979/avatar/184d1c3a60be1ffd.jpg",
-//             "country": "unknown",
-//             "maxRating": 406,
-//             "rank": "newbie",
-//             "rating": 406
-//         },
-//         {
-//             "_id": "6a2dd5d7a6a69e2c03a3eb13",
-//             "handle": "Asde",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/no-avatar.jpg",
-//             "country": "unknown",
-//             "maxRating": 0,
-//             "rank": "unrated",
-//             "rating": 0
-//         },
-//         {
-//             "_id": "6a2dd23da6a69e2c03a3ea8e",
-//             "handle": "Assa",
-//             "__v": 0,
-//             "avatar": "https://userpic.codeforces.org/no-avatar.jpg",
-//             "country": "unknown",
-//             "maxRating": 0,
-//             "rank": "unrated",
-//             "rating": 0
-//         }
-//     ],
-//     "meta": {
-//         "totalItems": 12,
-//         "totalPages": 2,
-//         "currentPage": 1,
-//         "itemsPerPage": 10,
-//         "hasNextPage": true,
-//         "hasPrevPage": false
-//     }
-// }

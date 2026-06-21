@@ -2,11 +2,26 @@ import { connectDB } from "@/lib/db";
 import { PaymentOrder } from "@/models/payment.model";
 
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
         await connectDB();
 
-        const orders = await PaymentOrder.find();
+        const { searchParams } = new URL(req.url);
+
+        const status = searchParams.get("status");
+        const courseId = searchParams.get("courseId");
+
+        const filter: any = {};
+
+        if (status) {
+            filter.status = status;
+        }
+
+        if (courseId) {
+            filter.courseId = courseId;
+        }
+
+        const orders = await PaymentOrder.find(filter);
 
         const headers = [
             "userId",
@@ -41,4 +56,11 @@ export async function GET() {
 }
 
 // /api/payments/export
-// hiting here will auto download the csv file of all payment orders
+/*
+
+/api/payments/export?status=PAID
+/api/payments/export?status=PENDING
+/api/payments/export?courseId=abc123
+/api/payments/export?status=PAID&courseId=xyz
+
+*/

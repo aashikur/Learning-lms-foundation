@@ -56,3 +56,12 @@ export async function VerifedSMS() {
     const data = await res.json();
     return data;
 }
+
+
+
+
+
+
+
+
+

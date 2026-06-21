@@ -171,13 +171,13 @@ export default function CodeforcePage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 text-left">
-              <TableHead className="w-[60px] text-center">#</TableHead>
+              <TableHead className="w-15 text-center">#</TableHead>
               <TableHead>Handle</TableHead>
               <TableHead>Rating</TableHead>
               <TableHead>Max Rating</TableHead>
               <TableHead>Rank</TableHead>
               <TableHead>Country</TableHead>
-              {isAdmin && <TableHead className="w-[80px] text-center"><EllipsisVertical className="h-4 w-4 mx-auto" /></TableHead>}
+              {isAdmin && <TableHead className="w-20 text-center"><EllipsisVertical className="h-4 w-4 mx-auto" /></TableHead>}
             </TableRow>
           </TableHeader>
 

@@ -8,7 +8,8 @@ export async function GET() {
     try {
         await connectDB();
 
-        const orders = await PaymentOrder.find();
+        const orders = await PaymentOrder.find()
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order
         return Response.json(
             {
                 success: true,

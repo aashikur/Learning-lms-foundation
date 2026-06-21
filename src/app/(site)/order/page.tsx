@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { GetAllPaymentOrders } from '@/services/payment.service'
+import DownloadFile from '@/app/(site)/order/DownloadFile';
 
 // Define a TypeScript interface for your order data structure
 interface Order {
@@ -42,6 +43,9 @@ export default function OrderPage() {
 
     return (
         <section className="container mx-auto py-10 px-4">
+
+            <DownloadFile/>
+            
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Payment Orders</h1>
                 

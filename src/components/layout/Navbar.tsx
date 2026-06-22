@@ -107,15 +107,15 @@ function MobileNav({ pathname }: { pathname: string }) {
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger>
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
+            <SheetTrigger >
+                <span 
+                    // variant="ghost" 
+                    // size="icon" 
                     className="rounded-full h-9 w-9 p-0 hover:bg-muted"
                 >
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Toggle Menu</span>
-                </Button>
+                </span>
             </SheetTrigger>
             <SheetContent side="right" className="pr-0 border-l">
                 {/* Accessibility requirement for Shadcn Dialogs/Sheets */}

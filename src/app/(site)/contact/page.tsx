@@ -1,11 +1,18 @@
-import React from 'react';
+
 import ContactForm from './ContactForm';
 import Image from 'next/image';
 import { PhoneIcon } from 'lucide-react';
+import { getContacts } from '@/services/contact.service';
+import TableSms from './TableSms';
 
-const ContactPage = () => {
+const ContactPage =  () => {
+
+    const ContactPromise =   getContacts();
+
+    
+
     return (
-        <div className="min-h-screen w-full bg-[#6c5ce7] -mt-20  flex items-center justify-center p-4  pt-11 font-sans">
+        <div className="min-h-screen w-full bg-[#6c5ce7] -mt-20  flex flex-col items-center justify-center p-4  pt-11 font-sans">
 
             <div className="bg-white border w-full max-w-5xl rounded-[2.2rem] shadow-2xl p-8 md:p-12 lg:p-16 grid grid-cols-1 md:grid-cols-12 gap-12 items-center relative overflow-hidden">
 
@@ -74,11 +81,11 @@ const ContactPage = () => {
                             <a href="#" className="w-10 h-10 bg-[#0077B5] text-white rounded-full flex items-center justify-center font-bold hover:opacity-90 transition-opacity">i</a>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
+
+
+        <TableSms ContactPromise={ContactPromise} />
         </div>
     );
 };

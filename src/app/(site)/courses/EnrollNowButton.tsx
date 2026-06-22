@@ -55,15 +55,23 @@ const EnrollNowButton = ({ course }: { course: Course }) => {
         };
         console.log("Payload:", payload);
 
-        const res = await CreatePaymentOrder(payload);
-        setOrderId(res.order._id);
-        setPaymentStatus("PENDING");
-        console.log("Response:", res.order._id);
+        try {
+
+            const res = await CreatePaymentOrder(payload);
+            setOrderId(res.order._id);
+            setPaymentStatus("PENDING");
+            console.log("Response:", res.order._id);
+           
+           
+     
 
 
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    
+
 
 
     useEffect(() => {
@@ -76,7 +84,7 @@ const EnrollNowButton = ({ course }: { course: Course }) => {
             setCount(prevCount => prevCount + 1);
 
             const data = await SMSStatus({ orderId });
-            
+
             console.log("Payment status response:", data);
             if (data.status === "PAID") {
                 setPaymentStatus("PAID");

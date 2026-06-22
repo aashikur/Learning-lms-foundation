@@ -8,3 +8,4 @@ const CourseSchema = new mongoose.Schema({
     { timestamps: true });
 
 export const Course = mongoose.models.Course || mongoose.model("Course", CourseSchema);
+

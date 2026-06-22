@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/app/api/test-email"  ],
+, "src/app/api/mail/test-email"  ],
   "exclude": ["node_modules"]
 }

@@ -1,8 +1,9 @@
-import { sendTestEmail } from "@/lib/mailer";
+import { sendTestEmail } from "@/services/mail.service";
+
 
 export async function GET() {
     try {
-        await sendTestEmail("Test Email", "Test email");
+        await sendTestEmail("Test Email", "Hello from VectorFit Mail System!");
 
         return Response.json({
             success: true,

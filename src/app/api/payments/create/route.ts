@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import { Course } from "@/models/course.model";
 import { PaymentOrder } from "@/models/payment.model";
+import { sendOrderInvoiceEmail } from "@/services/mail.service";
 import mongoose from "mongoose";
 
 export async function POST(
@@ -80,6 +81,25 @@ export async function POST(
             senderNumber: senderNumber || null,
             mobileOperator: mobileOperator || null
         });
+
+
+        try {
+            // 2. Automatically trigger the mail notification to admin using the response payload
+            await sendOrderInvoiceEmail({
+                    userId: order.userId,
+                    courseId: order.courseId,
+                    tnxId: order.tnxId,
+                    senderNumber: order.senderNumber,
+                    mobileOperator: order.mobileOperator,
+                }),
+            
+
+            console.log("Order created and Admin invoice sent.");
+        } catch (error) {
+            console.error("Error sending order invoice email:", error);
+        }
+
+
 
         return Response.json({
             success: true,

@@ -86,13 +86,12 @@ export async function POST(
         try {
             // 2. Automatically trigger the mail notification to admin using the response payload
             await sendOrderInvoiceEmail({
-                    userId: order.userId,
-                    courseId: order.courseId,
-                    tnxId: order.tnxId,
-                    senderNumber: order.senderNumber,
-                    mobileOperator: order.mobileOperator,
-                }),
-            
+                userId: order.userId,
+                courseId: order.courseId,
+                tnxId: order.tnxId,
+                senderNumber: order.senderNumber,
+                mobileOperator: order.mobileOperator,
+            });
 
             console.log("Order created and Admin invoice sent.");
         } catch (error) {
@@ -139,15 +138,4 @@ export async function POST(
 
     }
 
-}
-
-
-export async function GET(req: Request) {
-    await connectDB();
-
-    const orders = await PaymentOrder.find();
-    return Response.json({
-        success: true,
-        orders
-    });
 }

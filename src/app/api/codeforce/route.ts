@@ -50,13 +50,14 @@ export async function GET(request: Request) {
 
     const search = searchParams.get("search") || "";
     const page = parseInt(searchParams.get("page") as string) || 1;
-    const limit = parseInt(searchParams.get("limit") as string) || 10;
+    const limit = parseInt(searchParams.get("limit") as string) || 20;
 
     // Ensure page and limit are at least 1
     const sanitizedPage = Math.max(1, page);
     const sanitizedLimit = Math.max(1, limit);
 
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
+
     if (search) {
       query.handle = { $regex: search, $options: "i" };
     }
@@ -108,7 +109,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    return Response.json({ message: "Deleted successfully" });
+    return Response.json({ message: "Deleted successfully" }, { status: 200 });
   } catch (error) {
     return Response.json(
       { error: "Server error" },

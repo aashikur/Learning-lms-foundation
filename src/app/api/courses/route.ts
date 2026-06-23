@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 
         const query: Record<string, any> = {}
         if (search) {
-            query.handle = { $regex: search, $options: "i" };
+            query.title = { $regex: search, $options: "i" };
         }
 
         // 3. Calculate the number of documents to skip

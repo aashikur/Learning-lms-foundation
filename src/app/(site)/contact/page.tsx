@@ -5,9 +5,12 @@ import { PhoneIcon } from 'lucide-react';
 import { getContacts } from '@/services/contact.service';
 import TableSms from './TableSms';
 
-const ContactPage =  () => {
+const  ContactPage =  async() => {
 
-    const ContactPromise =   getContacts();
+    // const ContactPromise =   getContacts();
+    const contacts  =   await getContacts();
+    const contactList = contacts?.contacts || [];
+
 
     
 
@@ -87,7 +90,7 @@ const ContactPage =  () => {
             </div>
 
 
-        <TableSms ContactPromise={ContactPromise} />
+        <TableSms contactList={contactList} />
         </div>
     );
 };

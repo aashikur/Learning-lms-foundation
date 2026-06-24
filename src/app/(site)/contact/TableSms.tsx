@@ -1,15 +1,24 @@
 "use client"
 
-import { use, useTransition } from "react"
+import { use, useEffect, useState, useTransition } from "react"
 import { useRouter } from 'next/navigation';
 
-function TableSms({ ContactPromise }: { ContactPromise: Promise<any> }) {
-    const res = use(ContactPromise);
+function TableSms({ contactList }: { contactList: any[] }) {
+    // const res = use(ContactPromise);
 
     const router = useRouter();
-    const [isPending, startTransition] = useTransition();
+    // const [isPending, startTransition] = useTransition();
 
-    const contactList = (res && (res.contacts || res)) || [];
+    // const contactList = contacts?.contacts;
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (contactList) {
+            setIsLoading(false);
+        }
+
+    }, [contactList]);
+
     console.log("Contacts in TableSms:", contactList);
     const handleRefresh = () => {
         // startTransition keeps the UI responsive while refreshing
@@ -17,17 +26,27 @@ function TableSms({ ContactPromise }: { ContactPromise: Promise<any> }) {
         router.refresh();
 
     };
+
+    if(isLoading) {
+        return (
+            <div className="bg-[#7d6cff] w-full max-w-5xl rounded-[2.2rem] shadow-2xl p-8 md:p-12 lg:p-16 mt-12">
+                <h2 className="text-xl font-bold text-white mb-4">Contact List</h2>
+                <p className="text-white">Loading contacts...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-[#7d6cff] w-full max-w-5xl rounded-[2.2rem] shadow-2xl p-8 md:p-12 lg:p-16 mt-12">
             <h2 className="text-xl font-bold text-white mb-4">Contact List
 
                 <button
                     onClick={handleRefresh}
-                    disabled={isPending}
+                    // disabled={isPending}
 
                     className="px-4 py-2 bg-white text-purple-600 rounded ml-4 hover:bg-gray-200 transition-colors duration-300"
                 >
-                    {isPending ? 'Refreshing...' : 'Refresh List'}
+                    Refresh List
                 </button>
             </h2>
             <ul className="space-y-2">

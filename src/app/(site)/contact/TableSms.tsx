@@ -24,7 +24,8 @@ function TableSms({ ContactPromise }: { ContactPromise: Promise<any> }) {
                 <button
                     onClick={handleRefresh}
                     disabled={isPending}
-                    className="px-4 py-2 bg-white text-purple-600 rounded"
+
+                    className="px-4 py-2 bg-white text-purple-600 rounded ml-4 hover:bg-gray-200 transition-colors duration-300"
                 >
                     {isPending ? 'Refreshing...' : 'Refresh List'}
                 </button>

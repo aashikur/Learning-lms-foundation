@@ -39,3 +39,24 @@ export const getContacts = async () => {
         throw error;
     }
 }
+
+export const v2getContacts = async () => {
+    try {
+        const res = await fetch(`${config.baseURL}/api/v2/contacts`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                search: "",
+                page: 1,
+                limit: 20
+            })
+        });
+        const result = await res.json();
+        return result;
+    } catch (error) {
+        console.error("Error fetching contacts:", error);
+        throw error;
+    }
+}

@@ -18,7 +18,7 @@ const OrderSchema = new Schema<IOrder>({
   status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
   userSubmittedTrxId: { type: String, uppercase: true, trim: true, sparse: true },
   userSubmittedPhone: { type: String, trim: true },
-  paymentGateway: { type: String, enum: ['bkash', 'nagad'], required: true },
+  paymentGateway: { type: String, enum: ['bkash', 'nagad'] },
   paidAt: { type: Date }
 }, { timestamps: true });
 

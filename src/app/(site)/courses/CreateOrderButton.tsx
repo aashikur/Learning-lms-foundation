@@ -30,7 +30,7 @@ import { useEffect, useState } from "react";
 import { config } from "@/config";
 import { SMSStatus } from "@/services/sms.service";
 
-const EnrollNowButton = ({ course, className }: { course: Course, className?: string }) => {
+const CreateOrderButton = ({ course, className }: { course: Course, className?: string }) => {
     const [orderId, setOrderId] = useState<string | null>(null);
     const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
     const [count, setCount] = useState(0);
@@ -124,7 +124,7 @@ const EnrollNowButton = ({ course, className }: { course: Course, className?: st
                                 className={`bg-green-600 text-white hover:bg-green-700 ${className}`}
                                 disabled={loading || !mongoUser}
                             >
-                                Enroll Now
+                                Create Order
                             </Button>
                         </DrawerTrigger>
 
@@ -202,4 +202,4 @@ const EnrollNowButton = ({ course, className }: { course: Course, className?: st
     );
 };
 
-export default EnrollNowButton;
+export default CreateOrderButton;

@@ -16,6 +16,8 @@ import { Course } from "@/types/course.types";
 import EditCourse from "@/app/(site)/courses/components/EditCourse";
 import { Button } from "@/components/ui/button";
 import EnrollNowButton from "@/app/(site)/courses/EnrollNowButton";
+import MfsVerificationModal from "@/components/payment/MfsVerificationModal";
+import CreateOrderButton from "./CreateOrderButton";
 
 export default async function CoursesPage() {
     const { data: courses } = await getCourses();
@@ -77,16 +79,18 @@ export default async function CoursesPage() {
 
                             {/* Footer Section: Primary Purchase Actions */}
                             <CardFooter className="p-4 pt-0 gap-2 flex w-full">
-                                <Button variant="outline" size="sm" className="w-1/2 justify-center">
+                                {/* <Button variant="outline" size="sm" className="w-1/2 justify-center">
                                     Add to Cart
-                                </Button>
+                                </Button> */}
                                 <EnrollNowButton course={course} className="w-1/2 justify-center" />
+                                <CreateOrderButton course={course} className="w-1/2 justify-center" />
                             </CardFooter>
 
                         </Card>
                     ))}
                 </div>
             </section>
+            <MfsVerificationModal />
         </>
     )
 }

@@ -116,7 +116,7 @@ export default function MfsVerificationModal({ orderId, expectedAmount, gateway 
               Scanning Carrier Network Streams...
             </>
           ) : (
-            'Verify Payment Status'
+            'Verify Payment Status NOW!!!'
           )}
         </Button>
       </form>

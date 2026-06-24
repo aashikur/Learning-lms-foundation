@@ -36,12 +36,12 @@ const EditCourse = ({ course }: { course: Course }) => {
 
     return (
         <div>
-            <Drawer open={open} onOpenChange={setOpen}>
+            <Drawer open={open} onOpenChange={setOpen} direction="right">
                 <DrawerTrigger>
                     <Edit size={16} className="text-gray-600 hover:text-gray-800 cursor-pointer" />
                 </DrawerTrigger>
 
-                <DrawerContent className="mx-auto max-w-xl">
+                <DrawerContent  className="mx-auto max-w-xl w-full">
                     <DrawerHeader>
                         <DrawerTitle>Edit Course</DrawerTitle>
                         <DrawerDescription>Edit the course details below.</DrawerDescription>

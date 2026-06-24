@@ -32,7 +32,7 @@ export const CreateCourseDrawer = () => {
     }
 
     return (
-        <Drawer open={open} onOpenChange={setOpen}>
+        <Drawer open={open} onOpenChange={setOpen} direction="left" >
             <DrawerTrigger asChild>
                 <Button className="px-4 py-4">
                     <Plus className="size-4" /> Create Course

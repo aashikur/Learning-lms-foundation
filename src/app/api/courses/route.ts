@@ -6,12 +6,27 @@ export async function POST(req: Request) {
         await connectDB();
 
         const body = await req.json();
-        const { title, description, price } = body;
+        const { title, description, price, category, instructor, thumbnail, isPublished } = body;
+        // 2. Simple helper to generate a URL-safe slug from the title
+        const generatedSlug = title
+            ? title
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a hyphen
+                .replace(/^-+|-+$/g, '')  // Trim leading/trailing hyphens
+            : '';
 
+        // 3. Insert the complete document into MongoDB
         const course = await Course.create({
-            title: title,
-            description: description,
-            price: price
+            title,
+            description,
+            price,
+            category,
+            instructor, // Must be a valid User ObjectId string
+            slug: generatedSlug,
+            thumbnail: thumbnail || undefined, // Fallback to schema default if empty
+            isPublished: isPublished ?? false  // Handle boolean check explicitly
         });
 
         return Response.json({
@@ -42,6 +57,7 @@ export async function GET(request: Request) {
         const sanitizedPage = Math.max(1, page);
         const sanitizedLimit = Math.max(1, limit);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query: Record<string, any> = {}
         if (search) {
             query.title = { $regex: search, $options: "i" };
@@ -53,6 +69,7 @@ export async function GET(request: Request) {
         // 4. Execute database operations in parallel for better performance
         const [courses, totalCourses] = await Promise.all([
             Course.find(query)
+                .sort({ createdAt: -1 }) // Optional: sort by creation date descending
                 .skip(skip)
                 .limit(sanitizedLimit)
                 .lean(), // .lean() converts Mongoose docs to plain JS objects for speed
@@ -75,10 +92,10 @@ export async function GET(request: Request) {
                 }
             }
         );
-}
+    }
     catch (error) {
-    console.error('Error fetching courses:', error);
-    return new Response('Failed to fetch courses', { status: 500 });
-}
+        console.error('Error fetching courses:', error);
+        return new Response('Failed to fetch courses', { status: 500 });
+    }
 }
 

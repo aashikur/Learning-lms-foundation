@@ -13,10 +13,9 @@ export async function GET(req: Request) {
         const fromDate = searchParams.get("from");
         const toDate = searchParams.get("to");
 
-
         const fields = searchParams.get("fields"); // comma separated list of fields to include in the export
 
-
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const filter: any = {};
 
 

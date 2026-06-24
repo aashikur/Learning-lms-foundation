@@ -7,7 +7,7 @@ const PaymentOrderSchema =
             courseId: { type: String, required: true, },
             amount: { type: Number, required: true, },
             senderNumber: { type: String, default: null, },
-            mobileOperator: { type: String, default: null, },
+            mobileOperator: { type: String, enum: ["BKASH", "NAGAD", "ROCKET"], default: null, },
             tnxId: { type: String, required: true , unique: true},
             status: {
                 type: String, enum: ["PENDING", "PAID", "FAILED"], default: "PENDING"

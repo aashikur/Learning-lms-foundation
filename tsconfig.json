@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/app/api/mail/test-email"  ],
+, "src/app/api/mail/test-email", "src/app/api/v2/payments/sms-webhook"  ],
   "exclude": ["node_modules"]
 }

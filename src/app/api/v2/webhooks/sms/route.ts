@@ -1,6 +1,9 @@
 import { connectDB } from "@/lib/db";
 import { VerifiedSMS } from "@/models/verified-sms.model";
 
+
+
+
 export async function GET(req: Request) {
     try {
         await connectDB();

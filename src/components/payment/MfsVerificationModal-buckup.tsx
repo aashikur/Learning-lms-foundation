@@ -1,24 +1,22 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, ShieldAlert } from 'lucide-react';
-import PaymentGuide from '@/components/payment/PaymentGuide';
-import PaymentVerificationForm from '@/components/payment/PaymentVerificationForm';
 
 interface ComponentProps {
   orderId: string;
   expectedAmount: number;
+  gateway: 'bkash' | 'nagad';
 }
 
-export default function MfsVerificationModal({ orderId, expectedAmount }: ComponentProps) {
+export default function MfsVerificationModalBuckup({ orderId, expectedAmount, gateway }: ComponentProps) {
   const router = useRouter();
   const [trxId, setTrxId] = useState('');
   const [phone, setPhone] = useState('');
-  const [gateway, setGateway] = useState<'bkash' | 'nagad'>('bkash'); // Default selection
   const [isPolling, setIsPolling] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -29,14 +27,14 @@ export default function MfsVerificationModal({ orderId, expectedAmount }: Compon
 
     const intervalInstance = setInterval(async () => {
       try {
-        const payload = { orderId, trxId: targetTrx, senderPhone: phone, gateway };
-        console.log("Polling with payload:", systemRetries, payload);
-        systemRetries++;
+        
 
-        const res = await fetch('/api/v2/payments/verify', {
+
+        systemRetries++;
+        const res = await fetch('/api/payments/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ orderId, trxId: targetTrx, senderPhone: phone, gateway }),
         });
 
         const data = await res.json();
@@ -87,37 +85,21 @@ export default function MfsVerificationModal({ orderId, expectedAmount }: Compon
       </div>
     );
   }
+
   return (
     <div className="p-6 border rounded-xl bg-card max-w-md mx-auto space-y-4 shadow-md">
       <div>
-        <h3 className="text-lg font-bold">Manual Escrow Transfer</h3>
+        <h3 className="text-lg font-bold capitalize">Manual {gateway} Escrow Transfer</h3>
         <p className="text-sm text-muted-foreground">
           Send exactly <span className="font-semibold text-foreground">{expectedAmount} BDT</span> via Send Money to our personal number.
         </p>
       </div>
 
       <form onSubmit={handleVerificationTrigger} className="space-y-3">
-        {/* Gateway Selection Dropdown */}
-        <div>
-          <label className="text-xs font-semibold uppercase text-muted-foreground">Select Payment Gateway</label>
-          <select
-            value={gateway}
-            onChange={(e) => setGateway(e.target.value as 'bkash' | 'nagad')}
-            disabled={isPolling}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="bkash">bKash</option>
-            <option value="nagad">Nagad</option>
-          </select>
-        </div>
-
-        {/* Phone Number Input */}
         <div>
           <label className="text-xs font-semibold uppercase text-muted-foreground">Your Phone Number</label>
           <Input placeholder="017XXXXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={isPolling} />
         </div>
-
-        {/* Transaction ID Input */}
         <div>
           <label className="text-xs font-semibold uppercase text-muted-foreground">Transaction ID (TrxID)</label>
           <Input placeholder="8N34X9PZ2" value={trxId} onChange={(e) => setTrxId(e.target.value)} disabled={isPolling} className="uppercase font-mono tracking-wider" />

@@ -29,18 +29,21 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { config } from "@/config";
 import { SMSStatus } from "@/services/sms.service";
+import { CreateOrder } from "@/services/order.service";
+import { useRouter } from 'next/navigation';
+import { toast, Toaster } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const CreateOrderButton = ({ course, className }: { course: Course, className?: string }) => {
     const [orderId, setOrderId] = useState<string | null>(null);
-    const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-    const [count, setCount] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { mongoUser, loading } = useAuth();
     // console.log("Mongo User in EnrollNowButton:", mongoUser);
 
-    const { register, handleSubmit } = useForm()
+    const router = useRouter();
 
-    const handleEnroll = async (data: FieldValues) => {
+    const handleEnroll = async () => {
 
         if (!mongoUser || !mongoUser._id) {
             console.warn("Enroll attempted without authenticated user");
@@ -50,71 +53,55 @@ const CreateOrderButton = ({ course, className }: { course: Course, className?: 
         const payload = {
             userId: mongoUser._id,
             courseId: course._id,
-            ...data
+            amount: course.price,
         };
 
-        {/*
-            total payload data structure: 
-            userID 
-            courseId
-            tnxId
-            senderNumber
-            mobileOperator
-         */}
-
-        console.log("Payload:", payload);
-
+        setIsLoading(true);
         try {
+            const res = await CreateOrder(payload);
 
-            const res = await CreatePaymentOrder(payload);
-            setOrderId(res.order._id);
-            setPaymentStatus("PENDING");
-            console.log("Response:", res.order._id);
-           
-           
-     
+            setTimeout(() => {
 
+                router.push(`/checkout/${res.data._id}`);
+            }, 1000);
+
+
+            setOrderId(res.data._id);
 
         } catch (error) {
             console.log(error)
+        } finally {
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 3000);
+
+
         }
     }
 
 
 
 
-    useEffect(() => {
-
-        if (!orderId || paymentStatus !== "PENDING")
-            return;
-
-        const interval = setInterval(async () => {
-            // const res = await fetch(`${config.baseURL}/api/payments/status/${orderId}`);
-            setCount(prevCount => prevCount + 1);
-
-            const data = await SMSStatus({ orderId });
-
-            console.log("Payment status response:", data);
-            if (data.status === "PAID") {
-                setPaymentStatus("PAID");
-                clearInterval(interval);
-            }
-
-            if (data.status === "FAILED") {
-                setPaymentStatus("FAILED");
-                clearInterval(interval);
-            }
-        }, 3000);
-
-        return () => { clearInterval(interval); };
-
-    }, [orderId, paymentStatus, count]);
 
     return (
 
         <>
+            <Button
+                size="sm"
+                className={`bg-green-600 text-white hover:bg-green-700 ${className}`}
+                disabled={loading || !mongoUser}
+                onClick={() => handleEnroll()}
+            >
+                {isLoading ?
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    :
+                    "Create Order Now"
+                }
+            </Button>
 
-            {
+
+
+            {/* {
                 (
                     <Drawer>
                         <DrawerTrigger asChild>
@@ -196,7 +183,7 @@ const CreateOrderButton = ({ course, className }: { course: Course, className?: 
                         </DrawerContent>
                     </Drawer >
                 )
-            }
+            } */}
 
         </>
     );

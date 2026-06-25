@@ -47,6 +47,7 @@ export async function POST(req: Request) {
         trxId,
         amount
       });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (dbError: any) {
       if (dbError.code === 11000) {
         return NextResponse.json({ message: 'Idempotent transaction already archived' }, { status: 200 });
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
 
 
     // 6. Proactive Core Reconciliation Pipeline
-     try {
+    try {
 
       console.log(`step 6: Attempting to reconcile pending order for trxId: ${trxId} and amount: ${amount}`);
       const pendingOrder = await Order.findOne({
@@ -66,7 +67,11 @@ export async function POST(req: Request) {
       });
 
       if (pendingOrder) {
+        console.log(`step 6: PendingOrder found for trxId: ${trxId} and amount: ${amount}`);
+
         if (amount >= pendingOrder.amount) {
+          console.log(`step 6: status: paid, trxId: ${trxId} and amount: ${amount}`);
+
           pendingOrder.status = 'paid';
           pendingOrder.paidAt = new Date();
           await pendingOrder.save();
@@ -76,7 +81,7 @@ export async function POST(req: Request) {
           await savedSMS.save();
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.error(" step 6: Error occurred while processing pending order:", e);
       return NextResponse.json({ error: 'Error processing pending order' }, { status: 500 });
     }

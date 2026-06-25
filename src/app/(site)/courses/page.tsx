@@ -52,7 +52,7 @@ export default async function CoursesPage() {
                             </CardHeader>
 
                             {/* Content Section: Titles & Info */}
-                            <CardContent className="p-4 flex-grow">
+                            <CardContent className="p-4 grow">
                                 {/* Category Badge */}
                                 <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 block mb-1">
                                     {course.category}
@@ -90,7 +90,7 @@ export default async function CoursesPage() {
                     ))}
                 </div>
             </section>
-            <MfsVerificationModal />
+            {/* <MfsVerificationModal /> */}
         </>
     )
 }

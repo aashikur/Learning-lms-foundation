@@ -22,6 +22,6 @@ const OrderSchema = new Schema<IOrder>({
   paidAt: { type: Date }
 }, { timestamps: true });
 
-OrderSchema.index({ userSubmittedTrxId: 1 }, { sparse: true });
+// OrderSchema.index({ userSubmittedTrxId: 1 }, { sparse: true });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);

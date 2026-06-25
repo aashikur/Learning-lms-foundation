@@ -1,16 +1,28 @@
-
 import ContactForm from './ContactForm';
 import Image from 'next/image';
 import { PhoneIcon } from 'lucide-react';
-import { getContacts } from '@/services/contact.service';
 import TableSms from './TableSms';
+import { connectDB } from '@/lib/db';
+import { Contact } from '@/models/contact.model';
 
-const  ContactPage =  async() => {
+export const dynamic = 'force-dynamic';
 
-    // const ContactPromise =   getContacts();
-    const contacts  =   await getContacts();
-    const contactList = contacts?.contacts || [];
-
+const ContactPage = async () => {
+    let contactList: any[] = [];
+    try {
+        await connectDB();
+        const contacts = await Contact.find().sort({ createdAt: -1 });
+        contactList = contacts.map((contact: any) => ({
+            id: contact._id.toString(),
+            name: contact.name,
+            email: contact.email,
+            message: contact.message,
+            createdAt: contact.createdAt?.toISOString() || null,
+            updatedAt: contact.updatedAt?.toISOString() || null,
+        }));
+    } catch (error) {
+        console.error("Error loading contacts from database:", error);
+    }
 
     
 

@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, ShieldAlert } from 'lucide-react';
-import PaymentGuide from '@/components/payment/PaymentGuide';
-import PaymentVerificationForm from '@/components/payment/PaymentVerificationForm';
+import InstructionGuide from '@/components/payment/InstructionGuide';
 
 interface ComponentProps {
   orderId: string;
@@ -96,6 +95,41 @@ export default function MfsVerificationModal({ orderId, expectedAmount }: Compon
         </p>
       </div>
 
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* LEFT SIDE COMPONENT: Instruction Guide */}
+        <div className="lg:col-span-5">
+          <InstructionGuide
+            paymentMethod={paymentMethod}
+            activeStep={activeStep}
+            copied={copied}
+            copyToClipboard={copyToClipboard}
+            merchantNumber={merchantNumber}
+            totalAmount={orderDetails.total}
+            activeTheme={activeTheme}
+          />
+        </div>
+
+        {/* RIGHT SIDE COMPONENT: Interactive Payment Form */}
+        <div className="lg:col-span-7">
+          {/* <PaymentForm
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+            senderNumber={senderNumber}
+            handlePhoneChange={handlePhoneChange}
+            transactionId={transactionId}
+            handleTrxChange={handleTrxChange}
+            formErrors={formErrors}
+            handleConfirmPayment={handleConfirmPayment}
+            activeTheme={activeTheme}
+            setActiveStep={setActiveStep}
+            triggerToast={triggerToast}
+            setTransactionId={setTransactionId}
+            setFormErrors={setFormErrors}
+            orderDetails={orderDetails}
+            logoUrls={logoUrls}
+          /> */}
+        </div>
+      </div>
       <form onSubmit={handleVerificationTrigger} className="space-y-3">
         {/* Gateway Selection Dropdown */}
         <div>

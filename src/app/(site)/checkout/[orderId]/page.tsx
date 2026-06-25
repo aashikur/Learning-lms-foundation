@@ -14,7 +14,7 @@ const CheckoutPage = async ({ params }: PageProps) => {
             <h1 className="text-3xl font-bold mb-4">Checkout Page</h1>
             <p>Order ID: {orderId}</p>
             {/* Add more checkout details and components here */}
-            <MfsVerificationModal orderId={orderId} />
+            <MfsVerificationModal expectedAmount={1200} orderId={orderId} />
         </div>
     );
 }

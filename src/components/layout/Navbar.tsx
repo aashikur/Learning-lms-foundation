@@ -29,6 +29,7 @@ const navItems: NavItem[] = [
     { name: 'Contact', href: '/contact' },
     { name: 'sms', href: '/sms' },
     { name: 'order', href: '/order' },
+    { name: 'PDF', href: '/pdf' },
 ]
 
 export default function Navbar() {
@@ -83,6 +84,7 @@ export default function Navbar() {
    ========================================== */
 
 // Auth Status Component to handle loading/user state cleanly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AuthStatus({ user, loading }: { user: any; loading: boolean }) {
     if (loading) return <LoaderBasic />
     

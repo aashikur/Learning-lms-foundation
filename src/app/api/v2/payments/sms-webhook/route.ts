@@ -5,7 +5,7 @@ import { connectDB } from '@/lib/db';
 import { VerifiedSMS2 } from '@/models/VerifiedSMS2';
 import Order from '@/models/Order';
 
-const ALLOWED_SENDERS = ['BKASH', 'NAGAD', '01710000000']; // Add testing/system source phone numbers
+const ALLOWED_SENDERS = ['BKASH', 'NAGAD', '01710000000','+8801571048224']; // Add testing/system source phone numbers
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +13,9 @@ export async function POST(req: Request) {
     await connectDB();
 
     const body = await req.json();
-    const { from, text, secret_key } = body;
+    const { from, text, secret_key, time } = body;
+
+    console.log(`Received SMS Webhook: from=${from}, text=${text}, secret_key=${secret_key}, time=${time}`);
 
 
     // 1. Signature Security Verification
@@ -21,6 +23,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Unauthorized handshake signature' }, { status: 401 });
     }
 
+    
     // 2. Structural Content Validations
     if (!from || !text) {
       return NextResponse.json({ error: 'Malformed payload data structure' }, { status: 400 });
@@ -31,7 +34,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Sender identity rejected' }, { status: 403 });
     }
 
-    // 4. Data Extraction via Parsing Pipeline
+    // 4. Data Extraction via Parsing Pipeline ` 
     const { trxId, amount } = parseIncomingSMS(from, text);
     if (!trxId || !amount) {
       return NextResponse.json({ error: 'Unrecognized transaction parameters' }, { status: 422 });

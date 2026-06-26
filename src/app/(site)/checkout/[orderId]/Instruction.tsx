@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  Check, 
-  Copy, 
-  Smartphone, 
-  ShieldCheck, 
-  Info, 
-  ArrowRight, 
-  Loader2, 
-  CheckCircle2, 
+import {
+  Check,
+  Copy,
+  Smartphone,
+  ShieldCheck,
+  Info,
+  ArrowRight,
+  Loader2,
+  CheckCircle2,
   ArrowLeft,
   AlertCircle,
   Clock
@@ -17,15 +17,53 @@ import {
 // In your TSX project, you can easily separate these into individual files.
 
 // 1. LEFT SIDE COMPONENT: InstructionGuide
-const InstructionGuide = ({ 
-  paymentMethod, 
-  activeStep, 
-  copied, 
-  copyToClipboard, 
-  merchantNumber, 
+type InstructionTheme = {
+  badge: string;
+  solidBtn: string;
+  hoverBtn: string;
+  lightBg: string;
+  activeBorder: string;
+  // optional focus ring class used on input elements
+  focusRing?: string;
+};
+
+type InstructionGuideProps = {
+  paymentMethod: string;
+  activeStep: number;
+  copied: boolean;
+  copyToClipboard: (value: string) => void;
+  merchantNumber: string;
+  totalAmount: number;
+  activeTheme: InstructionTheme;
+};
+
+type PaymentFormProps = {
+  paymentMethod: string;
+  setPaymentMethod: (value: string) => void;
+  senderNumber: string;
+  handlePhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  transactionId: string;
+  handleTrxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formErrors: { senderNumber: string; transactionId: string };
+  handleConfirmPayment: (e: React.FormEvent<HTMLFormElement>) => void;
+  activeTheme: InstructionTheme;
+  setActiveStep: (value: number) => void;
+  triggerToast: (msg: string) => void;
+  setTransactionId: (value: string) => void;
+  setFormErrors: React.Dispatch<React.SetStateAction<{ senderNumber: string; transactionId: string }>>;
+  orderDetails: { item: string; total: number };
+  logoUrls: { bkash: string; nagad: string };
+};
+
+const InstructionGuide = ({
+  paymentMethod,
+  activeStep,
+  copied,
+  copyToClipboard,
+  merchantNumber,
   totalAmount,
-  activeTheme 
-}) =>{
+  activeTheme
+}: InstructionGuideProps) => {
   return (
     <div className="space-y-6">
       {/* Instructions Container */}
@@ -46,11 +84,10 @@ const InstructionGuide = ({
 
           {/* Step 1: Send Money */}
           <div className={`relative flex gap-4 transition-all duration-300 ${activeStep === 1 ? 'opacity-100 scale-100' : 'opacity-70 scale-98'}`}>
-            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${
-              activeStep === 1 
-                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md` 
+            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${activeStep === 1
+                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md`
                 : 'bg-white text-slate-400 border-slate-200'
-            }`}>
+              }`}>
               1
             </div>
             <div className="space-y-3 flex-grow">
@@ -72,11 +109,10 @@ const InstructionGuide = ({
                   <button
                     type="button"
                     onClick={() => copyToClipboard(merchantNumber)}
-                    className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-lg text-xs font-bold transition-all shadow-sm ${
-                      copied 
-                        ? 'bg-green-600 text-white hover:bg-green-700' 
+                    className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-lg text-xs font-bold transition-all shadow-sm ${copied
+                        ? 'bg-green-600 text-white hover:bg-green-700'
                         : `${activeTheme.solidBtn} text-white ${activeTheme.hoverBtn}`
-                    }`}
+                      }`}
                   >
                     {copied ? (
                       <>
@@ -101,11 +137,10 @@ const InstructionGuide = ({
 
           {/* Step 2: Extract transaction code */}
           <div className={`relative flex gap-4 transition-all duration-300 ${activeStep === 2 ? 'opacity-100 scale-100' : 'opacity-70 scale-98'}`}>
-            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${
-              activeStep === 2 
-                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md` 
+            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${activeStep === 2
+                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md`
                 : 'bg-white text-slate-400 border-slate-200'
-            }`}>
+              }`}>
               2
             </div>
             <div className="space-y-1">
@@ -113,7 +148,7 @@ const InstructionGuide = ({
               <p className="text-xs text-slate-500 leading-relaxed">
                 After sending payment, copy the unique 8-10 digit <b>Transaction ID (TrxID)</b> from the confirmation SMS or in-app statement.
               </p>
-              
+
               {/* Visual Clue representation */}
               <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 mt-3 flex items-center gap-3">
                 <div className="h-8 w-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
@@ -121,7 +156,7 @@ const InstructionGuide = ({
                 </div>
                 <div className="text-[10px] text-slate-500 font-semibold leading-normal">
                   Example SMS format:<br />
-                  "TrxID <span className="font-bold text-indigo-600 font-mono tracking-wider bg-slate-100 px-1 py-0.5 rounded">9JK8L10P</span> Successful..."
+                  &quot;TrxID <span className="font-bold text-indigo-600 font-mono tracking-wider bg-slate-100 px-1 py-0.5 rounded">9JK8L10P</span> Successful...&ldquo;
                 </div>
               </div>
             </div>
@@ -129,34 +164,20 @@ const InstructionGuide = ({
 
           {/* Step 3: Paste and Verify */}
           <div className={`relative flex gap-4 transition-all duration-300 ${activeStep === 3 ? 'opacity-100 scale-100' : 'opacity-70 scale-98'}`}>
-            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${
-              activeStep === 3 
-                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md` 
+            <div className={`z-10 flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm border-2 ${activeStep === 3
+                ? `${activeTheme.solidBtn} text-white border-transparent shadow-md`
                 : 'bg-white text-slate-400 border-slate-200'
-            }`}>
+              }`}>
               3
             </div>
             <div className="space-y-1">
               <h4 className="font-bold text-slate-800 text-sm">Submit to verify</h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Paste the code in the right field, input your sender mobile number, and hit "Confirm Payment" button.
+                Paste the code in the right field, input your sender mobile number, and hit &ldquo;Confirm Payment&ldquo; button.
               </p>
             </div>
           </div>
 
-        </div>
-      </div>
-
-      {/* Security Banner Card */}
-      <div className="bg-gradient-to-tr from-slate-900 to-slate-800 rounded-3xl p-6 text-white shadow-lg flex items-center gap-4">
-        <div className="p-3 bg-white/10 rounded-2xl flex-shrink-0">
-          <ShieldCheck size={28} className={paymentMethod === 'bkash' ? 'text-pink-500' : 'text-orange-500'} />
-        </div>
-        <div>
-          <h4 className="font-bold text-sm">Security Assured</h4>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-            Transaction matching algorithm ensures zero false flags and protects sensitive wallet info.
-          </p>
         </div>
       </div>
     </div>
@@ -180,12 +201,12 @@ function PaymentForm({
   setFormErrors,
   orderDetails,
   logoUrls
-}) {
+}: PaymentFormProps) {
   const [imageError, setImageError] = useState({ bkash: false, nagad: false });
 
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
-      
+
       {/* Micro Order Summary */}
       <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
         <div className="space-y-0.5">
@@ -203,10 +224,10 @@ function PaymentForm({
           <span className="h-5 w-1 bg-slate-800 rounded-full"></span>
           1. Select Payment Method
         </h3>
-        
+
         {/* Method Selectors */}
         <div className="grid grid-cols-2 gap-4">
-          
+
           {/* bKash Selector */}
           <button
             type="button"
@@ -214,24 +235,23 @@ function PaymentForm({
               setPaymentMethod('bkash');
               setActiveStep(1);
             }}
-            className={`relative p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2.5 border-2 transition-all duration-200 outline-none ${
-              paymentMethod === 'bkash' 
-                ? 'border-[#E2136E] bg-pink-50/20 shadow-md scale-[1.01]' 
+            className={`relative p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2.5 border-2 transition-all duration-200 outline-none ${paymentMethod === 'bkash'
+                ? 'border-[#E2136E] bg-pink-50/20 shadow-md scale-[1.01]'
                 : 'border-slate-100 bg-white hover:border-slate-200 hover:bg-slate-50/50'
-            }`}
+              }`}
           >
             {paymentMethod === 'bkash' && (
               <span className="absolute top-2 right-2 bg-[#E2136E] text-white p-0.5 rounded-full z-10">
                 <Check size={10} strokeWidth={3} />
               </span>
             )}
-            
+
             {/* bKash Logo Container */}
             <div className="h-10 w-full flex items-center justify-center px-2 overflow-hidden">
               {!imageError.bkash ? (
-                <img 
-                  src={logoUrls.bkash} 
-                  alt="bKash" 
+                <img
+                  src={logoUrls.bkash}
+                  alt="bKash"
                   onError={() => setImageError(prev => ({ ...prev, bkash: true }))}
                   className="max-h-full max-w-full object-contain rounded-lg"
                 />
@@ -239,7 +259,7 @@ function PaymentForm({
                 <span className="font-bold text-lg text-[#E2136E]">bKash</span>
               )}
             </div>
-            
+
             <span className={`text-[10px] font-bold tracking-wider uppercase ${paymentMethod === 'bkash' ? 'text-[#E2136E]' : 'text-slate-400'}`}>
               bKash Personal
             </span>
@@ -252,11 +272,10 @@ function PaymentForm({
               setPaymentMethod('nagad');
               setActiveStep(1);
             }}
-            className={`relative p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2.5 border-2 transition-all duration-200 outline-none ${
-              paymentMethod === 'nagad' 
-                ? 'border-[#F47216] bg-orange-50/20 shadow-md scale-[1.01]' 
+            className={`relative p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2.5 border-2 transition-all duration-200 outline-none ${paymentMethod === 'nagad'
+                ? 'border-[#F47216] bg-orange-50/20 shadow-md scale-[1.01]'
                 : 'border-slate-100 bg-white hover:border-slate-200 hover:bg-slate-50/50'
-            }`}
+              }`}
           >
             {paymentMethod === 'nagad' && (
               <span className="absolute top-2 right-2 bg-[#F47216] text-white p-0.5 rounded-full z-10">
@@ -267,9 +286,9 @@ function PaymentForm({
             {/* Nagad Logo Container */}
             <div className="h-10 w-full flex items-center justify-center px-2 overflow-hidden">
               {!imageError.nagad ? (
-                <img 
-                  src={logoUrls.nagad} 
-                  alt="Nagad" 
+                <img
+                  src={logoUrls.nagad}
+                  alt="Nagad"
                   onError={() => setImageError(prev => ({ ...prev, nagad: true }))}
                   className="max-h-full max-w-full object-contain rounded-lg"
                 />
@@ -277,7 +296,7 @@ function PaymentForm({
                 <span className="font-bold text-lg text-[#F47216]">Nagad</span>
               )}
             </div>
-            
+
             <span className={`text-[10px] font-bold tracking-wider uppercase ${paymentMethod === 'nagad' ? 'text-[#F47216]' : 'text-slate-400'}`}>
               Nagad Personal
             </span>
@@ -308,13 +327,12 @@ function PaymentForm({
               onChange={handlePhoneChange}
               placeholder="e.g. 01712345678"
               onFocus={() => setActiveStep(3)}
-              className={`w-full py-3.5 pl-11 pr-4 rounded-xl border font-medium text-slate-800 transition-all outline-none text-base placeholder-slate-300 ${
-                formErrors.senderNumber 
-                  ? 'border-red-300 focus:border-red-500 bg-red-50/10' 
+              className={`w-full py-3.5 pl-11 pr-4 rounded-xl border font-medium text-slate-800 transition-all outline-none text-base placeholder-slate-300 ${formErrors.senderNumber
+                  ? 'border-red-300 focus:border-red-500 bg-red-50/10'
                   : senderNumber.length === 11 && !formErrors.senderNumber
-                  ? 'border-green-300 bg-green-50/10 focus:border-green-500'
-                  : 'border-slate-200 focus:border-slate-900 focus:bg-white'
-              } ${activeTheme.focusRing}`}
+                    ? 'border-green-300 bg-green-50/10 focus:border-green-500'
+                    : 'border-slate-200 focus:border-slate-900 focus:bg-white'
+                } ${activeTheme.focusRing}`}
             />
           </div>
           {formErrors.senderNumber ? (
@@ -341,16 +359,15 @@ function PaymentForm({
               onChange={handleTrxChange}
               onFocus={() => setActiveStep(3)}
               placeholder="e.g. AM89B0L8K"
-              className={`w-full py-3.5 px-4 rounded-xl border font-mono font-bold tracking-wider text-slate-800 transition-all outline-none uppercase placeholder-slate-300 text-lg ${
-                formErrors.transactionId 
-                  ? 'border-red-300 focus:border-red-500 bg-red-50/10' 
+              className={`w-full py-3.5 px-4 rounded-xl border font-mono font-bold tracking-wider text-slate-800 transition-all outline-none uppercase placeholder-slate-300 text-lg ${formErrors.transactionId
+                  ? 'border-red-300 focus:border-red-500 bg-red-50/10'
                   : transactionId.length >= 8 && !formErrors.transactionId
-                  ? 'border-green-300 bg-green-50/10 focus:border-green-500'
-                  : 'border-slate-200 focus:border-slate-900 focus:bg-white'
-              } ${activeTheme.focusRing}`}
+                    ? 'border-green-300 bg-green-50/10 focus:border-green-500'
+                    : 'border-slate-200 focus:border-slate-900 focus:bg-white'
+                } ${activeTheme.focusRing}`}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={async () => {
                 try {
                   const clipboardText = await navigator.clipboard.readText();
@@ -388,11 +405,10 @@ function PaymentForm({
         <div className="pt-4">
           <button
             type="submit"
-            className={`w-full text-white font-bold py-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] ${activeTheme.solidBtn} ${activeTheme.hoverBtn} ${
-              (!senderNumber || !transactionId || formErrors.senderNumber || formErrors.transactionId) 
-                ? 'opacity-90' 
+            className={`w-full text-white font-bold py-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] ${activeTheme.solidBtn} ${activeTheme.hoverBtn} ${(!senderNumber || !transactionId || formErrors.senderNumber || formErrors.transactionId)
+                ? 'opacity-90'
                 : ''
-            }`}
+              }`}
           >
             Confirm Payment & Verify
             <ArrowRight size={18} />
@@ -403,8 +419,9 @@ function PaymentForm({
   );
 }
 
+
 // 3. MAIN COMPONENT: App
-export default function App() {
+export function Instruction() {
   // Global States
   const [paymentMethod, setPaymentMethod] = useState('bkash'); // 'bkash' or 'nagad'
   const [senderNumber, setSenderNumber] = useState('');
@@ -436,14 +453,14 @@ export default function App() {
   };
 
   // Toast Helper
-  const triggerToast = (msg) => {
+  const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
 
   // Copy Function (Secure and Compatible with Iframes/Sandboxes)
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.top = "0";
@@ -470,8 +487,8 @@ export default function App() {
   };
 
   // Live dynamic validation handlers
-  const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ''); 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
     if (value.length <= 11) {
       setSenderNumber(value);
       if (value.length === 11) {
@@ -489,8 +506,8 @@ export default function App() {
     }
   };
 
-  const handleTrxChange = (e) => {
-    const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); 
+  const handleTrxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (value.length <= 12) {
       setTransactionId(value);
       if (value.length >= 8) {
@@ -504,7 +521,7 @@ export default function App() {
   };
 
   // Handle Form Confirm Submit
-  const handleConfirmPayment = (e) => {
+  const handleConfirmPayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let isValid = true;
@@ -564,13 +581,14 @@ export default function App() {
       focusRing: 'focus:ring-[#F47216]/20',
       badge: 'bg-orange-50 text-[#F47216] border-orange-100',
     }
-  };
+  } as const;
 
-  const activeTheme = brandThemes[paymentMethod];
+  type BrandThemeKey = keyof typeof brandThemes;
+  const activeTheme = brandThemes[paymentMethod as BrandThemeKey];
 
   return (
     <div className="min-h-screen bg-slate-50/60 font-sans text-slate-800 antialiased flex flex-col justify-center py-6 sm:py-12">
-      
+
       {/* Toast Alert Popup */}
       {showToast && (
         <div className="fixed top-5 right-5 z-50 flex items-center gap-3 bg-slate-900 text-white py-3 px-5 rounded-xl shadow-2xl border border-slate-800 transition-all duration-300 transform translate-y-0 max-w-sm">
@@ -582,13 +600,13 @@ export default function App() {
       {/* Primary Container */}
       <main className="max-w-6xl w-full mx-auto px-4 flex-grow flex items-center justify-center">
         {paymentStatus === 'success' ? (
-          
+
           /* Success Screen State */
           <div className="w-full max-w-xl bg-white rounded-3xl border border-slate-100 shadow-xl p-8 text-center animate-fade-in">
             <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-100">
               <CheckCircle2 size={44} className="text-green-500" />
             </div>
-            
+
             <span className="px-3 py-1 bg-green-100/60 text-green-700 text-xs font-semibold rounded-full tracking-wide uppercase">
               Payment Verified
             </span>
@@ -609,26 +627,26 @@ export default function App() {
                   <span className={`h-2.5 w-2.5 rounded-full ${paymentMethod === 'bkash' ? 'bg-pink-600' : 'bg-orange-500'}`}></span>
                   {paymentMethod} Transfer
                 </span>
-                
+
                 <span className="text-slate-500">Sender Mobile</span>
                 <span className="text-slate-800 font-mono text-right">{senderNumber}</span>
-                
+
                 <span className="text-slate-500">Transaction ID</span>
                 <span className="text-slate-800 font-mono font-bold text-right tracking-wide text-indigo-600">{transactionId}</span>
-                
+
                 <span className="text-slate-500">Paid Amount</span>
                 <span className="text-slate-900 font-bold text-right text-base">৳ {orderDetails.total.toLocaleString()} BDT</span>
               </div>
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-3 items-center justify-center">
-              <button 
+              <button
                 onClick={resetForm}
                 className="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
               >
                 <ArrowLeft size={16} /> New Transaction
               </button>
-              <button 
+              <button
                 onClick={() => triggerToast('Redirecting to dashboard...')}
                 className={`w-full sm:w-auto px-8 py-3 rounded-xl text-white font-semibold text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${activeTheme.solidBtn} ${activeTheme.hoverBtn}`}
               >
@@ -649,7 +667,7 @@ export default function App() {
             </div>
             <h3 className="text-xl font-bold text-slate-900">Validating Transaction</h3>
             <p className="text-slate-500 text-sm mt-3 max-w-xs mx-auto leading-relaxed">
-              We are verifying your TrxID <span className="font-mono font-semibold text-slate-800">{transactionId}</span> with the financial network. Please don't close this browser window.
+              We are verifying your TrxID <span className="font-mono font-semibold text-slate-800">{transactionId}</span> with the financial network. Please don&lsquo;t close this browser window.
             </p>
             <div className="mt-6 flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 border border-slate-100">
               <Clock size={14} className="animate-pulse" />
@@ -661,10 +679,10 @@ export default function App() {
 
           /* Standard Checkout State (Guidelines on Left (5-columns) / Input Form on Right (7-columns)) */
           <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* LEFT SIDE COMPONENT: Instruction Guide */}
             <div className="lg:col-span-5">
-              <InstructionGuide 
+              <InstructionGuide
                 paymentMethod={paymentMethod}
                 activeStep={activeStep}
                 copied={copied}
@@ -677,7 +695,7 @@ export default function App() {
 
             {/* RIGHT SIDE COMPONENT: Interactive Payment Form */}
             <div className="lg:col-span-7">
-              <PaymentForm 
+              <PaymentForm
                 paymentMethod={paymentMethod}
                 setPaymentMethod={setPaymentMethod}
                 senderNumber={senderNumber}

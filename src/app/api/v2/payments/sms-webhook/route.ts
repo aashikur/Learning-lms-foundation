@@ -13,11 +13,11 @@ export async function POST(req: Request) {
     await connectDB();
 
     const body = await req.json();
+
     const { from, text, secret_key, time } = body;
 
-    console.log(`Received SMS Webhook: from=${from}, text=${text}, secret_key=${secret_key}, time=${time}`);
 
-
+   
     // 1. Signature Security Verification
     if (!secret_key || secret_key !== process.env.MFS_WEBHOOK_SECRET) {
       return Response.json({ error: 'Unauthorized handshake signature' }, { status: 401 });
@@ -36,6 +36,8 @@ export async function POST(req: Request) {
 
     // 4. Data Extraction via Parsing Pipeline ` 
     const { trxId, amount } = parseIncomingSMS(from, text);
+    console.log(`Parsed SMS: trxId=${trxId}, amount=${amount}`);
+
     if (!trxId || !amount) {
       return NextResponse.json({ error: 'Unrecognized transaction parameters' }, { status: 422 });
     }
